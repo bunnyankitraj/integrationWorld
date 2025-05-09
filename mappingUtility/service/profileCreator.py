@@ -79,6 +79,7 @@ def process_obj(obj_elem, data, key_counter):
 
 
 def generate_xml(json_data):
+    json_data = json.loads(json_data)
     component = Element("bns:Component", {
         "xmlns:bns": "http://api.platform.boomi.com/",
         "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",

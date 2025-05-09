@@ -120,7 +120,7 @@ def generate_boomi_map(
     })
 
     SubElement(component, "bns:encryptedValues")
-    SubElement(component, "bns:description").text = f"Auto-generated field mapping from {excel_path}"
+    SubElement(component, "bns:description").text = f"Auto-generated field mapping"
     obj = SubElement(component, "bns:object")
     map_ = SubElement(obj, "Map", {
         "fromProfile": from_profile_id,
