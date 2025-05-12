@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from mappingUtility.service import MappingService, ComponentService,ProfileCreator;
+from mappingUtility.service import MappingService, ComponentService,profileCreator;
 
 @api_view(['POST'])
 def start_file_move(request):

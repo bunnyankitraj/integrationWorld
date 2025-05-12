@@ -1,4 +1,4 @@
-from mappingUtility.service import BoomiComponentUploader,  MapComponentXMLgenerator, ProfileCreator,ComponentService;
+from mappingUtility.service import BoomiComponentUploader,  mapComponentXMLgenerator, profileCreator,ComponentService;
 import tempfile
 import os
 
