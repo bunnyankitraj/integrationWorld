@@ -21,21 +21,20 @@ def start_file_move(request):
         excel_data = excel_file.read()
 
         print('Files received')
-        # Initialize mapping service and process files
-        # mapping_service = MappingService()
         
         print('Processing files...')
         processed_result = MappingService.process_files(source_data, destination_data, excel_data)
 
         print('Files processed')
+        componenetId = ComponentService.extract_component_id(processed_result)
 
         # Return the processed result and componentId
         return JsonResponse({
             'status': "success",
             'message': 'Files processed successfully',
-            'redirectUrl': '/mappingUtility/redirect',  # Adjust as needed
-            'componentId': ComponentService.extract_component_id(processed_result),
-            'response': processed_result
+            'redirectUrl': 'https://platform.boomi.com/AtomSphere.html#build;accountId=dpwsubaccount1-FZOWUA;branchName=main;components='+componenetId, 
+            'componentId': componenetId,
+            # 'response': processed_result
         })
 
     except Exception as e:
