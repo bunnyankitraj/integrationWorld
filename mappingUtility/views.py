@@ -3,10 +3,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-from mappingUtility.service import MappingService, ComponentService,profileCreator;
+import traceback
+from mappingUtility.service import MappingService, ComponentService,ProfileCreator;
 
 @api_view(['POST'])
-def start_file_move(request):
+def map_xml_component_generator(request):
     try:
         print("Request received")
         source_file = request.FILES.get('source')
@@ -23,7 +24,7 @@ def start_file_move(request):
         print('Files received')
         
         print('Processing files...')
-        processed_result = MappingService.process_files(source_data, destination_data, excel_data)
+        processed_result = MappingService.process_mapping_files(source_data, destination_data, excel_data)
 
         print('Files processed')
         componenetId = ComponentService.extract_component_id(processed_result)
@@ -38,7 +39,12 @@ def start_file_move(request):
         })
 
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        tb = traceback.format_exc()
+        return JsonResponse({
+            'error': str(e),
+            'traceback': tb,
+            'function': 'map_xml_component_generator'
+        }, status=500)
 
 
 def index(request):

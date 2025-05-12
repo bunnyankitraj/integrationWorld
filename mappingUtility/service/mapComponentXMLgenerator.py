@@ -6,20 +6,20 @@ from datetime import datetime
 import re
 
 
-def extract_paths_from_json_profile(profile_xml_path):
+def extract_paths_from_json_profile(profile_xml_content):
     try:
-        tree = ET.parse(profile_xml_path)
-        root = tree.getroot()
-        print(f"Successfully parsed XML file: {profile_xml_path}")
+        print(f"Parsing XML content from provided string")
+        root = ET.fromstring(profile_xml_content)
+        print(f"Successfully parsed XML content")
     except Exception as e:
-        print(f"Error parsing XML file {profile_xml_path}: {e}")
+        print(f"Error parsing XML content: {e}")
         return {}
 
     mappings = {}
     for child in root:
         traverse_and_extract_mappings(child, "", "", mappings)
 
-    print(f"Extracted {len(mappings)} field mappings from {profile_xml_path}")
+    print(f"Extracted {len(mappings)} field mappings from profile XML")
     return mappings
 
 def extract_main_node(parent_path):
@@ -71,7 +71,7 @@ def extract_final_key(path):
 
 
 def generate_boomi_map(
-    excel_path,
+    excel_data,
     source_component_xml_path,
     target_component_xml_path,
     source_col,
@@ -83,8 +83,8 @@ def generate_boomi_map(
     map_name="Generated Map from Excel"
 ):
     try:
-        print(f"Reading Excel file: {excel_path}")
-        df = pd.read_excel(excel_path, sheet_name="Field Mapping")
+        print(f"Reading Excel file from uploaded content")
+        df = pd.read_excel(excel_data, sheet_name="Field Mapping")
         df = df[[target_col, source_col]].dropna()
         print(f"Found {len(df)} mapping entries in Excel")
     except Exception as e:
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     print("Starting Boomi mapping generation script...")
 
     xml_output = generate_boomi_map(
-        excel_path="AI_Field_Mapping.xlsx",
+        excel_data="AI_Field_Mapping.xlsx",
         source_component_xml_path="sourceProfile.xml",
         target_component_xml_path="destinationProfile.xml",
         source_col="Source Field (Dropdown)",
