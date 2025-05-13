@@ -5,12 +5,12 @@ def process_mapping_files(source_data, destination_data, excel_data):
     try:
         print("Starting process_mapping_files execution.")
         
-        sourceTempXml = ProfileCreator.generate_xml(source_data)
+        sourceTempXml = ProfileCreator.generate_profile_xml(source_data, isSource=True)
         sourceXml = BoomiComponentUploader.upload_component(sourceTempXml)
         sourceComponentId = ComponentService.extract_component_id(sourceXml)
         print(f"Extracted source component ID: {sourceComponentId}")
         
-        destinationTempXml = ProfileCreator.generate_xml(destination_data)
+        destinationTempXml = ProfileCreator.generate_profile_xml(destination_data, isSource=False)
         destinationXml = BoomiComponentUploader.upload_component(destinationTempXml)
         destinationComponentId = ComponentService.extract_component_id(destinationXml)
         print(f"Extracted destination component ID: {destinationComponentId}")

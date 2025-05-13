@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.service import MappingService, ComponentService,ProfileCreator;
+from mappingUtility.service import MappingService, ComponentService,ProfileCreator,FeildMappingExcelGenerator;
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
@@ -59,12 +59,36 @@ def process_json(request):
         data['processed'] = True
         data['message'] = 'Your data has been processed.'
 
-
-        profileCreator=ProfileCreator()
-        xml_response = profileCreator.generate_xml(data)
+        xml_response = ProfileCreator.generate_profile_xml(data)
 
         return HttpResponse(xml_response, content_type="application/xml")
 
     except Exception as e:
         # In case of an error, return a JSON response with error message
         return JsonResponse({'error': str(e)}, status=400)
+
+
+@api_view(['POST'])
+def mapping_excel_generator(request):
+    try:
+        source_type = request.POST.get('source_type')
+        destination_type = request.POST.get('destination_type')
+        source_file = request.FILES.get('source')
+        destination_file = request.FILES.get('destination')
+
+        if not all([source_type, destination_type, source_file, destination_file]):
+            return JsonResponse({'error': 'Missing one or more required fields or files'}, status=400)
+
+        source_data = source_file.read()
+        target_data = destination_file.read()
+
+        processed_result = FeildMappingExcelGenerator.main(source_type, source_data, destination_type, target_data)
+        return processed_result
+
+    except Exception as e:
+        tb = traceback.format_exc()
+        return JsonResponse({
+            'error': str(e),
+            'traceback': tb,
+            'function': 'mapping_excel_generator'
+        }, status=500)

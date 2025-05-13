@@ -78,7 +78,7 @@ def process_obj(obj_elem, data, key_counter):
                 process_obj(inner_obj, value[0], key_counter)
 
 
-def generate_xml(json_data):
+def generate_profile_xml(json_data,isSource=True):
     json_data = json.loads(json_data)
     component = Element("bns:Component", {
         "xmlns:bns": "http://api.platform.boomi.com/",
@@ -88,9 +88,9 @@ def generate_xml(json_data):
         "currentVersion": "true",
         "deleted": "false",
         "folderFullPath": "DPW Sub Account 1/ZZZ_Users/Mapping Automation",
-        "folderId": "Rjo3NjI1Mzcz",
+        "folderId": "Rjo3NjQ3ODEx",
         "folderName": "Automation",
-        "name": "destinationProfile",
+        "name": "sourceProfile" if isSource else "destinationProfile",
         "type": "profile.json",
         "version": "1"
     })
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     with open("sourceJson.json", "r") as f:
         json_obj = json.load(f, object_pairs_hook=OrderedDict)
 
-    xml_output = generate_xml(json_obj)
+    xml_output = generate_profile_xml(json_obj)
 
     with open("sourceProfile.xml", "w") as f:
         f.write(xml_output)
