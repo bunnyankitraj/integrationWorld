@@ -79,7 +79,7 @@ def generate_boomi_map(
     from_profile_id,
     to_profile_id,
     folder_path="DPW Sub Account 1/ZZZ_Users/Mapping Automation",
-    folder_id="Rjo3NjI1Mzcz",
+    folder_id="Rjo3NjQ3ODEx",
     map_name="Generated Map from Excel"
 ):
     try:
