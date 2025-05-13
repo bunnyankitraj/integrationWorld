@@ -52,7 +52,7 @@ def index(request):
 
 
 @api_view(['POST'])
-def process_json(request):
+def profile_xml_generator(request):
     try:
         data = request.data
 
