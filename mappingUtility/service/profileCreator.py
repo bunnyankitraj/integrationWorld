@@ -79,7 +79,6 @@ def process_obj(obj_elem, data, key_counter):
 
 
 def generate_profile_xml(json_data,isSource=True):
-    json_data = json.loads(json_data)
     component = Element("bns:Component", {
         "xmlns:bns": "http://api.platform.boomi.com/",
         "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -152,7 +151,10 @@ if __name__ == "__main__":
     with open("sourceJson.json", "r") as f:
         json_obj = json.load(f, object_pairs_hook=OrderedDict)
 
-    xml_output = generate_profile_xml(json_obj)
+
+
+    json_data = json.loads(json_obj)
+    xml_output = generate_profile_xml(json_data)
 
     with open("sourceProfile.xml", "w") as f:
         f.write(xml_output)

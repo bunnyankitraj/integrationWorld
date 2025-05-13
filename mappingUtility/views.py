@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.service import MappingService, ComponentService,ProfileCreator,FeildMappingExcelGenerator;
+from mappingUtility.service import MappingService, ComponentService,ProfileCreator,FeildMappingExcelGenerator,BoomiComponentUploader;
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
@@ -55,17 +55,24 @@ def index(request):
 def profile_xml_generator(request):
     try:
         data = request.data
+        xml_response = ProfileCreator.generate_profile_xml(data,True)
+        xml_boomi_response = BoomiComponentUploader.upload_component(xml_response)
+        componenetId = ComponentService.extract_component_id(xml_boomi_response)
 
-        data['processed'] = True
-        data['message'] = 'Your data has been processed.'
-
-        xml_response = ProfileCreator.generate_profile_xml(data)
-
-        return HttpResponse(xml_response, content_type="application/xml")
+        return JsonResponse({
+            'status': "success",
+            'message': 'Files processed successfully',
+            'redirectUrl': 'https://platform.boomi.com/AtomSphere.html#build;accountId=dpwsubaccount1-FZOWUA;branchName=main;components='+componenetId, 
+            'componentId': componenetId,
+        })
 
     except Exception as e:
-        # In case of an error, return a JSON response with error message
-        return JsonResponse({'error': str(e)}, status=400)
+        tb = traceback.format_exc()
+        return JsonResponse({
+            'error': str(e),
+            'traceback': tb,
+            'function': 'profile_xml_generator'
+        }, status=500)
 
 
 @api_view(['POST'])
