@@ -88,6 +88,8 @@ def mapping_excel_generator(request):
 
         source_data = source_file.read()
         target_data = destination_file.read()
+        source_type = source_type.upper()
+        destination_type = destination_type.upper()
 
         processed_result = FeildMappingExcelGenerator.main(source_type, source_data, destination_type, target_data)
         return processed_result
