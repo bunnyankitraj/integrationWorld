@@ -2,7 +2,7 @@ import json
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from collections import OrderedDict
-from resources.globlas import folder_id
+from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 
 def process_obj(obj_elem, data, key_counter):
     for field_name, value in data.items():
@@ -80,15 +80,15 @@ def process_obj(obj_elem, data, key_counter):
 
 def generate_profile_xml(json_data,isSource=True):
     component = Element("bns:Component", {
-        "xmlns:bns": "http://api.platform.boomi.com/",
-        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "branchId": "Qjo2OTgxOA",
-        "branchName": "main",
+        "xmlns:bns": boomi_component_bns_url,
+        "xmlns:xsi": boomi_component_xsi_url,
+        "branchId": branch_id,
+        "branchName": branch_name,
         "currentVersion": "true",
         "deleted": "false",
-        "folderFullPath": "DPW Sub Account 1/ZZZ_Users/Mapping Automation",
+        "folderFullPath": folder_path,
         "folderId": folder_id,
-        "folderName": "Automation",
+        "folderName": folder_path.split("/")[-1],
         "name": "sourceProfile" if isSource else "destinationProfile",
         "type": "profile.json",
         "version": "1"

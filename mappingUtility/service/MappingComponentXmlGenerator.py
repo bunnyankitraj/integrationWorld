@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 from datetime import datetime
 import re
-from resources.globlas import folder_id
+from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 
 def extract_paths_from_json_profile(profile_xml_content):
     try:
@@ -78,7 +78,6 @@ def generate_boomi_map(
     target_col,
     from_profile_id,
     to_profile_id,
-    folder_path="DPW Sub Account 1/ZZZ_Users/Mapping Automation",
     map_name="Generated Map from Excel"
 ):
     try:
@@ -102,10 +101,10 @@ def generate_boomi_map(
         print("Warning: No mappings found in target component XML")
 
     component = Element("bns:Component", {
-        "xmlns:bns": "http://api.platform.boomi.com/",
-        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "branchId": "Qjo2OTgxOA",
-        "branchName": "main",
+        "xmlns:bns": boomi_component_bns_url,
+        "xmlns:xsi": boomi_component_xsi_url,
+        "branchId": branch_id,
+        "branchName": branch_name,
         "createdDate": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "currentVersion": "true",
         "deleted": "false",

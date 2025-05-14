@@ -1,1 +1,6 @@
 folder_id = 'Rjo3NjQ3ODEx'
+folder_path = 'DPW Sub Account 1/ZZZ_Users/Mapping Automation'
+branch_id = 'Qjo2OTgxOA'
+branch_name = 'main'
+boomi_component_bns_url = 'http://api.platform.boomi.com/'
+boomi_component_xsi_url = 'http://www.w3.org/2001/XMLSchema-instance'
