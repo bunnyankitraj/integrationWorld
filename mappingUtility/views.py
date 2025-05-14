@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.service import MappingService, ComponentService,ProfileCreator,FeildMappingExcelGenerator,BoomiComponentUploader;
+from mappingUtility.service import MappingService,ComponentService,ProfileComponentGenerator,FeildMappingExcelGenerator,BoomiComponentUploader;
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
@@ -55,7 +55,7 @@ def index(request):
 def profile_xml_generator(request):
     try:
         data = request.data
-        xml_response = ProfileCreator.generate_profile_xml(data,True)
+        xml_response = ProfileComponentGenerator.generate_profile_xml(data,True)
         xml_boomi_response = BoomiComponentUploader.upload_component(xml_response)
         componenetId = ComponentService.extract_component_id(xml_boomi_response)
 

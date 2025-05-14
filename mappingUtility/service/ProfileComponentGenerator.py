@@ -2,7 +2,7 @@ import json
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from collections import OrderedDict
-
+from resources.globlas import folder_id
 
 def process_obj(obj_elem, data, key_counter):
     for field_name, value in data.items():
@@ -87,7 +87,7 @@ def generate_profile_xml(json_data,isSource=True):
         "currentVersion": "true",
         "deleted": "false",
         "folderFullPath": "DPW Sub Account 1/ZZZ_Users/Mapping Automation",
-        "folderId": "Rjo3NjQ3ODEx",
+        "folderId": folder_id,
         "folderName": "Automation",
         "name": "sourceProfile" if isSource else "destinationProfile",
         "type": "profile.json",

@@ -1,9 +1,7 @@
 import json
 import xml.etree.ElementTree as ET
 import os
-import difflib
 import io
-import base64
 from openpyxl import Workbook
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.styles import PatternFill, Font
@@ -12,7 +10,7 @@ from collections import Counter
 import posixpath
 import requests
 import traceback
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 
 os.path = posixpath
 

@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 from datetime import datetime
 import re
-
+from resources.globlas import folder_id
 
 def extract_paths_from_json_profile(profile_xml_content):
     try:
@@ -79,7 +79,6 @@ def generate_boomi_map(
     from_profile_id,
     to_profile_id,
     folder_path="DPW Sub Account 1/ZZZ_Users/Mapping Automation",
-    folder_id="Rjo3NjQ3ODEx",
     map_name="Generated Map from Excel"
 ):
     try:

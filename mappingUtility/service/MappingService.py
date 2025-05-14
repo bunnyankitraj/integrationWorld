@@ -1,4 +1,4 @@
-from mappingUtility.service import BoomiComponentUploader,  MapComponentXMLgenerator, ProfileCreator,ComponentService;
+from mappingUtility.service import BoomiComponentUploader,MappingComponentXmlGenerator, ProfileComponentGenerator,ComponentService;
 import json
 
 
@@ -7,18 +7,18 @@ def process_mapping_files(source_data, destination_data, excel_data):
         print("Starting process_mapping_files execution.")
         
         source_data = json.loads(source_data)
-        sourceTempXml = ProfileCreator.generate_profile_xml(source_data, isSource=True)
+        sourceTempXml = ProfileComponentGenerator.generate_profile_xml(source_data, isSource=True)
         sourceXml = BoomiComponentUploader.upload_component(sourceTempXml)
         sourceComponentId = ComponentService.extract_component_id(sourceXml)
         print(f"Extracted source component ID: {sourceComponentId}")
         
         destination_data = json.loads(destination_data)
-        destinationTempXml = ProfileCreator.generate_profile_xml(destination_data, isSource=False)
+        destinationTempXml = ProfileComponentGenerator.generate_profile_xml(destination_data, isSource=False)
         destinationXml = BoomiComponentUploader.upload_component(destinationTempXml)
         destinationComponentId = ComponentService.extract_component_id(destinationXml)
         print(f"Extracted destination component ID: {destinationComponentId}")
         
-        mapTempComponentXml = MapComponentXMLgenerator.generate_boomi_map(
+        mapTempComponentXml = MappingComponentXmlGenerator.generate_boomi_map(
             excel_data,
             sourceXml,
             destinationXml,
