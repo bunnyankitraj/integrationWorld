@@ -4,22 +4,22 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
 from datetime import datetime
 import re
+from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 
-
-def extract_paths_from_json_profile(profile_xml_path):
+def extract_paths_from_json_profile(profile_xml_content):
     try:
-        tree = ET.parse(profile_xml_path)
-        root = tree.getroot()
-        print(f"Successfully parsed XML file: {profile_xml_path}")
+        print(f"Parsing XML content from provided string")
+        root = ET.fromstring(profile_xml_content)
+        print(f"Successfully parsed XML content")
     except Exception as e:
-        print(f"Error parsing XML file {profile_xml_path}: {e}")
+        print(f"Error parsing XML content: {e}")
         return {}
 
     mappings = {}
     for child in root:
         traverse_and_extract_mappings(child, "", "", mappings)
 
-    print(f"Extracted {len(mappings)} field mappings from {profile_xml_path}")
+    print(f"Extracted {len(mappings)} field mappings from profile XML")
     return mappings
 
 def extract_main_node(parent_path):
@@ -30,7 +30,7 @@ def extract_main_node(parent_path):
         if part not in ['Root', 'Object', 'Array'] and not re.match(r'ArrayElement\d*$', part)
     ]
 
-    return '/'.join(filtered_parts) + '/' if filtered_parts else ''
+    return '/'.join(filtered_parts) if filtered_parts else ''
 
 def traverse_and_extract_mappings(element, parent_name_path, parent_key_path, mappings):
     is_mappable = element.get('isMappable') == 'true'
@@ -47,10 +47,10 @@ def traverse_and_extract_mappings(element, parent_name_path, parent_key_path, ma
         key_part = f"*[@key='{element_key}']"
         current_key_path = f"{current_key_path}/{key_part}" if current_key_path else key_part
 
-    filtered_parent_path = extract_main_node(parent_name_path);
+    filtered_parent_path = extract_main_node(current_name_path);
     
     if is_mappable and element_name and element_key:
-        mappings[filtered_parent_path + element_name] = {
+        mappings[filtered_parent_path] = {
             "name_path": current_name_path,
             "key_path": current_key_path
         }
@@ -62,7 +62,7 @@ def traverse_and_extract_mappings(element, parent_name_path, parent_key_path, ma
 def normalize_field_name(field_name):
     field_name = re.sub(r'\[\*\]', '', field_name)
     field_name = field_name.replace('.', '/')
-    return field_name.strip()
+    return field_name.lstrip('/').strip()
 
 
 def extract_final_key(path):
@@ -71,20 +71,18 @@ def extract_final_key(path):
 
 
 def generate_boomi_map(
-    excel_path,
+    excel_data,
     source_component_xml_path,
     target_component_xml_path,
     source_col,
     target_col,
     from_profile_id,
     to_profile_id,
-    folder_path="DPW Sub Account 1/ZZZ_Users/Mapping Automation",
-    folder_id="Rjo3NjI1Mzcz",
     map_name="Generated Map from Excel"
 ):
     try:
-        print(f"Reading Excel file: {excel_path}")
-        df = pd.read_excel(excel_path, sheet_name="Field Mapping")
+        print(f"Reading Excel file from uploaded content")
+        df = pd.read_excel(excel_data, sheet_name="Field Mapping")
         df = df[[target_col, source_col]].dropna()
         print(f"Found {len(df)} mapping entries in Excel")
     except Exception as e:
@@ -103,10 +101,10 @@ def generate_boomi_map(
         print("Warning: No mappings found in target component XML")
 
     component = Element("bns:Component", {
-        "xmlns:bns": "http://api.platform.boomi.com/",
-        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "branchId": "Qjo2OTgxOA",
-        "branchName": "main",
+        "xmlns:bns": boomi_component_bns_url,
+        "xmlns:xsi": boomi_component_xsi_url,
+        "branchId": branch_id,
+        "branchName": branch_name,
         "createdDate": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "currentVersion": "true",
         "deleted": "false",
@@ -120,7 +118,7 @@ def generate_boomi_map(
     })
 
     SubElement(component, "bns:encryptedValues")
-    SubElement(component, "bns:description").text = f"Auto-generated field mapping from {excel_path}"
+    SubElement(component, "bns:description").text = f"Auto-generated field mapping"
     obj = SubElement(component, "bns:object")
     map_ = SubElement(obj, "Map", {
         "fromProfile": from_profile_id,
@@ -154,7 +152,9 @@ def generate_boomi_map(
                     break
 
         if not source_info:
-            print(f"⚠️ Warning: No mapping found for source field: {source_field}")
+            print(f"Source mappings available: {len(source_mappings)} entries")
+            print(f"Details for source mappings: {source_mappings}")
+            print(f"⚠️ Warning: No mapping found for source field: {source_field} (Normalized: {source_field_name}, Info: {source_info})")
             continue
         if not target_info:
             print(f"⚠️ Warning: No mapping found for target field: {target_field}")
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     print("Starting Boomi mapping generation script...")
 
     xml_output = generate_boomi_map(
-        excel_path="AI_Field_Mapping.xlsx",
+        excel_data="AI_Field_Mapping.xlsx",
         source_component_xml_path="sourceProfile.xml",
         target_component_xml_path="destinationProfile.xml",
         source_col="Source Field (Dropdown)",
