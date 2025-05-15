@@ -1,9 +1,8 @@
-from mappingUtility.service import BoomiComponentUploader,MappingComponentXmlGenerator, ComponentService,FileTypeChecker
-import json
-from mappingUtility.strategy.JSONProcessor import JSONProcessor
-from mappingUtility.strategy.XMLProcessor import XMLProcessor
-from mappingUtility.strategy.FileProcessingContext import FileProcessingContext
-from mappingUtility.strategy.FileProcessor import FileProcessor
+from mappingUtility.Utility import ComponentUtilsService
+from mappingUtility.service import BoomiApiService, MappingComponentXmlGenerator, FileTypeChecker
+from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
+from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
+from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
 
 def process_json_file(file_content,file_type):
         if file_type == 'json' or file_type == 'JSON':
@@ -23,13 +22,13 @@ def process_mapping_files(source_data, destination_data, excel_data, source_file
         print("Starting process_mapping_files execution.")
         
         sourceTempXml = process_json_file(source_data, source_file_type)
-        sourceXml = BoomiComponentUploader.upload_component(sourceTempXml)
-        sourceComponentId = ComponentService.extract_component_id(sourceXml)
+        sourceXml = BoomiApiService.upload_component(sourceTempXml)
+        sourceComponentId = ComponentUtilsService.extract_component_id(sourceXml)
         print(f"Extracted source component ID: {sourceComponentId}")
         
         destinationTempXml = process_json_file(destination_data, destination_file_type)
-        destinationXml = BoomiComponentUploader.upload_component(destinationTempXml)
-        destinationComponentId = ComponentService.extract_component_id(destinationXml)
+        destinationXml = BoomiApiService.upload_component(destinationTempXml)
+        destinationComponentId = ComponentUtilsService.extract_component_id(destinationXml)
         print(f"Extracted destination component ID: {destinationComponentId}")
         
         mapTempComponentXml = MappingComponentXmlGenerator.generate_boomi_map(
@@ -43,7 +42,7 @@ def process_mapping_files(source_data, destination_data, excel_data, source_file
         )
         print("Generated Boomi map component XML.")
         
-        mapComponentXml = BoomiComponentUploader.upload_component(mapTempComponentXml)
+        mapComponentXml = BoomiApiService.upload_component(mapTempComponentXml)
         print("Uploaded map component.")
         
         return mapComponentXml

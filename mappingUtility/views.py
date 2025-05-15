@@ -2,10 +2,11 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.service import MappingService,ComponentService,FeildMappingExcelGenerator,BoomiComponentUploader,FileTypeChecker
-from mappingUtility.strategy.JSONProcessor import JSONProcessor
-from mappingUtility.strategy.XMLProcessor import XMLProcessor
-from mappingUtility.strategy.FileProcessingContext import FileProcessingContext
+from mappingUtility.Utility import ComponentUtilsService
+from mappingUtility.service import BoomiApiService, ExcelMappingGenerator, MappingService,FileTypeChecker
+from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
+from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
+from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
@@ -29,7 +30,7 @@ def map_xml_component_generator(request):
         processed_result = MappingService.process_mapping_files(source_data, destination_data, excel_data,source_file_type,destination_file_type)
 
         print('Files processed')
-        componenetId = ComponentService.extract_component_id(processed_result)
+        componenetId = ComponentUtilsService.extract_component_id(processed_result)
 
         # Return the processed result and componentId
         return JsonResponse({
@@ -75,10 +76,10 @@ def profile_xml_generator(request):
         # Process and get result
         xml_response = context.execute(content)
         
-        xml_boomi_response = BoomiComponentUploader.upload_component(xml_response)
+        xml_boomi_response = BoomiApiService.upload_component(xml_response)
         print("Uploaded component successfully")
         print(xml_boomi_response)
-        componenetId = ComponentService.extract_component_id(xml_boomi_response)
+        componenetId = ComponentUtilsService.extract_component_id(xml_boomi_response)
 
         return JsonResponse({
             'status': "success",
@@ -112,7 +113,7 @@ def mapping_excel_generator(request):
         source_type = source_type.upper()
         destination_type = destination_type.upper()
 
-        processed_result = FeildMappingExcelGenerator.main(source_type, source_data, destination_type, target_data)
+        processed_result = ExcelMappingGenerator.main(source_type, source_data, destination_type, target_data)
         return processed_result
 
     except Exception as e:

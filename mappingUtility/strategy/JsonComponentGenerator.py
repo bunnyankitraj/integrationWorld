@@ -2,7 +2,7 @@ import json
 from collections import OrderedDict
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
-from mappingUtility.strategy.FileProcessor import FileProcessor
+from mappingUtility.strategy.ComponentGenerator import FileProcessor
 from mappingUtility.Utility import JsonCleaner
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 

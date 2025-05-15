@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from mappingUtility.strategy.FileProcessor import FileProcessor
+from mappingUtility.strategy.ComponentGenerator import FileProcessor
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
