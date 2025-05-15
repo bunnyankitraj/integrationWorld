@@ -3,12 +3,13 @@ from collections import OrderedDict
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from mappingUtility.strategy.FileProcessor import FileProcessor
+from mappingUtility.Utility import JsonCleaner
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 
 class JSONProcessor(FileProcessor):
     def process(self, file_content):
         print("Processing JSON file content.")
-        # Example of processing JSON data
+        file_content = JsonCleaner.main(file_content)
         xml_output = JSONProcessor.generate_profile_xml(file_content)
         print("XML output generated successfully.")
         print(xml_output)

@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
@@ -59,11 +57,11 @@ def index(request):
 def profile_xml_generator(request):
     try:
         file_type = request.POST.get('type')
-        data = request.POST.get('content')
+        content_file = request.FILES.get('content')
         print("Request received")
         print(f"File type: {file_type}")
-        print(f"Data: {data}")
 
+        content = content_file.read()
         if file_type == 'json' or file_type == 'JSON':
             strategy = JSONProcessor()
         elif file_type == 'xml' or file_type == 'XML':
@@ -75,7 +73,7 @@ def profile_xml_generator(request):
         context = FileProcessingContext(strategy)
 
         # Process and get result
-        xml_response = context.execute(data)
+        xml_response = context.execute(content)
         
         xml_boomi_response = BoomiComponentUploader.upload_component(xml_response)
         print("Uploaded component successfully")
