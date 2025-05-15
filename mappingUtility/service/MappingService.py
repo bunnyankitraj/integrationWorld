@@ -4,7 +4,7 @@ from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
 from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
 from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
 
-def process_json_file(file_content,file_type):
+def profile_component_generator(file_content,file_type):
         if file_type == 'json' or file_type == 'JSON':
             strategy = JSONProcessor()
         elif file_type == 'xml' or file_type == 'XML':
@@ -21,12 +21,12 @@ def process_mapping_files(source_data, destination_data, excel_data, source_file
     try:
         print("Starting process_mapping_files execution.")
         
-        sourceTempXml = process_json_file(source_data, source_file_type)
+        sourceTempXml = profile_component_generator(source_data, source_file_type)
         sourceXml = BoomiApiService.upload_component(sourceTempXml)
         sourceComponentId = ComponentUtilsService.extract_component_id(sourceXml)
         print(f"Extracted source component ID: {sourceComponentId}")
         
-        destinationTempXml = process_json_file(destination_data, destination_file_type)
+        destinationTempXml = profile_component_generator(destination_data, destination_file_type)
         destinationXml = BoomiApiService.upload_component(destinationTempXml)
         destinationComponentId = ComponentUtilsService.extract_component_id(destinationXml)
         print(f"Extracted destination component ID: {destinationComponentId}")

@@ -59,22 +59,9 @@ def profile_xml_generator(request):
     try:
         file_type = request.POST.get('type')
         content_file = request.FILES.get('content')
-        print("Request received")
-        print(f"File type: {file_type}")
-
+        
         content = content_file.read()
-        if file_type == 'json' or file_type == 'JSON':
-            strategy = JSONProcessor()
-        elif file_type == 'xml' or file_type == 'XML':
-            strategy = XMLProcessor()
-        else:
-            return JsonResponse({'error': 'Unsupported type'}, status=400)
-
-        # Initialize the context with the selected strategy
-        context = FileProcessingContext(strategy)
-
-        # Process and get result
-        xml_response = context.execute(content)
+        xml_response = MappingService.profile_component_generator(content,file_type)
         
         xml_boomi_response = BoomiApiService.upload_component(xml_response)
         print("Uploaded component successfully")
