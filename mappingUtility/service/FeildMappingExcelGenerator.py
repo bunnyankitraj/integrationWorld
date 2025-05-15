@@ -11,34 +11,27 @@ import posixpath
 import requests
 import traceback
 from django.http import HttpResponse
+from resources.globlas import GEN_AI_API_KEY,GEN_AI_URL
 
 os.path = posixpath
-
-API_KEY = "AIzaSyCOKPBzAeqOocXuiiH44NGBIGLX-IrnlrY"
 
 def read_file_from_resources(file_path):
     with open(file_path, 'r') as file:
         return file.read()
     
 def read_edi_promptes():
-    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resource', 'ediPrompt.txt')
+    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'ediPrompt.txt')
     template = read_file_from_resources(resource_path)
-    # print("Formatted read_edi_promptes:", template)
     return template
 
 def load_main_prompts(source_fields, target_fields):
-    # template = read_file_from_resources('/resource/mainPrompt.txt')
-    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resource', 'mainPrompt.txt')
+    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'mainPrompt.txt')
     template = read_file_from_resources(resource_path)
 
-    
-    # Convert lists to comma-separated string or JSON array (as per your use case)
     source_str = ', '.join(source_fields)
     target_str = ', '.join(target_fields)
 
-    # Replace placeholders with actual data
     formatted_template = template.format(sourceNames=source_str, targetNames=target_str)
-    # print("Formatted main_prompts:", formatted_template)
     return formatted_template
 
 def extract_json_paths(data, parent_key="", seen_paths=None):
@@ -182,7 +175,7 @@ def read_content(content, file_type, seg_sep="~", elem_sep="*", sub_elem_sep=":"
 def call_gemini_api(prompt):
     try:
         response = requests.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY,
+            GEN_AI_URL + GEN_AI_API_KEY,
             headers={"Content-Type": "application/json"},
             json={
             "contents": [{"parts": [{"text": prompt}]}],
@@ -363,9 +356,13 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
 def main(source_type, source_data, target_type, target_data):
     try:
         source_fields = read_content(source_data, source_type)
+        print(f"Source Fields: {source_fields}")
         target_fields = read_content(target_data, target_type)
+        print(f"Target Fields: {target_fields}")
         mappings =  get_mapping_from_ai(source_fields, target_fields)
+        print(f"Mappings: {mappings}")
         output = create_excel_mapping(mappings, source_fields, target_fields, source_type, target_type)
+        print(f"Excel file created successfully")
         response = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="AI_Field_Mapping.xlsx"'
         return response

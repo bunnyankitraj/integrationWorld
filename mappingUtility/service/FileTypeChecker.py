@@ -1,20 +1,31 @@
-class FileTypeChecker:
-    
-    
-    def get_file_type(self, file):
-        if not file:
-            return None
-        
-        file_extension = file.name.split('.')[-1].lower()
-        if file_extension == 'json':
+from xml.etree import ElementTree
+import json
+
+def get_file_type(file):
+    try:
+        print("Detecting file type...")
+        filename = file.name.lower()
+        if filename.endswith('.json'):
             return 'json'
-        elif file_extension == 'xml':
+        elif filename.endswith('.xml'):
             return 'xml'
-        
-        content_type = file.content_type.lower()
-        if 'json' in content_type:
+
+        file.seek(0)
+        content = file.read(2048).decode('utf-8').strip()
+        file.seek(0)
+
+        try:
+            json.loads(content)
             return 'json'
-        elif 'xml' in content_type:
+        except json.JSONDecodeError:
+            pass
+
+        try:
+            ElementTree.fromstring(content)
             return 'xml'
-        
-        return None
+        except ElementTree.ParseError:
+            pass
+
+        return 'unknown'
+    except Exception:
+        return 'unknown'

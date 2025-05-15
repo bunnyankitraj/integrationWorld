@@ -69,37 +69,7 @@ def extract_final_key(path):
     matches = re.findall(r"\[@key='(\d+)'\]", path)
     return matches[-1] if matches else None
 
-
-def generate_boomi_map(
-    excel_data,
-    source_component_xml_path,
-    target_component_xml_path,
-    source_col,
-    target_col,
-    from_profile_id,
-    to_profile_id,
-    map_name="Generated Map from Excel"
-):
-    try:
-        print(f"Reading Excel file from uploaded content")
-        df = pd.read_excel(excel_data, sheet_name="Field Mapping")
-        df = df[[target_col, source_col]].dropna()
-        print(f"Found {len(df)} mapping entries in Excel")
-    except Exception as e:
-        print(f"Error reading Excel file: {e}")
-        return None
-
-    print(f"Processing source component XML: {source_component_xml_path}")
-    source_mappings = extract_paths_from_json_profile(source_component_xml_path)
-
-    print(f"Processing target component XML: {target_component_xml_path}")
-    target_mappings = extract_paths_from_json_profile(target_component_xml_path)
-
-    if not source_mappings:
-        print("Warning: No mappings found in source component XML")
-    if not target_mappings:
-        print("Warning: No mappings found in target component XML")
-
+def create_boomi_component():
     component = Element("bns:Component", {
         "xmlns:bns": boomi_component_bns_url,
         "xmlns:xsi": boomi_component_xsi_url,
@@ -112,13 +82,50 @@ def generate_boomi_map(
         "folderId": folder_id,
         "folderName": folder_path.split("/")[-1],
         "modifiedDate": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
-        "name": map_name,
+        "name": "Generated Map from Excel",
         "type": "transform.map",
         "version": "1"
     })
 
     SubElement(component, "bns:encryptedValues")
     SubElement(component, "bns:description").text = f"Auto-generated field mapping"
+    return component
+
+
+def generate_boomi_map(
+    excel_data,
+    source_component_xml_path,
+    target_component_xml_path,
+    source_col,
+    target_col,
+    from_profile_id,
+    to_profile_id
+):
+    try:
+        print(f"Reading Excel file from uploaded content")
+        df = pd.read_excel(excel_data, sheet_name="Field Mapping")
+        df = df[[target_col, source_col]].dropna()
+        print(f"Found {len(df)} mapping entries in Excel")
+    except Exception as e:
+        print(f"Error reading Excel file: {e}")
+        return None
+
+    print(f"Processing source component XML: {source_component_xml_path}")
+    source_mappings = extract_paths_from_json_profile(source_component_xml_path)
+    print(f"Found {len(source_mappings)} mappings in source component XML")
+    print(f"Source mappings: {source_mappings}")
+
+    print(f"Processing target component XML: {target_component_xml_path}")
+    target_mappings = extract_paths_from_json_profile(target_component_xml_path)
+    print(f"Found {len(target_mappings)} mappings in target component XML")
+    print(f"Target mappings: {target_mappings}")
+
+    if not source_mappings:
+        print("Warning: No mappings found in source component XML")
+    if not target_mappings:
+        print("Warning: No mappings found in target component XML")
+
+    component = create_boomi_component()
     obj = SubElement(component, "bns:object")
     map_ = SubElement(obj, "Map", {
         "fromProfile": from_profile_id,

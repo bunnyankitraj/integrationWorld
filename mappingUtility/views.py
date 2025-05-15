@@ -4,7 +4,10 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.service import MappingService,ComponentService,ProfileComponentGenerator,FeildMappingExcelGenerator,BoomiComponentUploader;
+from mappingUtility.service import MappingService,ComponentService,FeildMappingExcelGenerator,BoomiComponentUploader,FileTypeChecker
+from mappingUtility.strategy.JSONProcessor import JSONProcessor
+from mappingUtility.strategy.XMLProcessor import XMLProcessor
+from mappingUtility.strategy.FileProcessingContext import FileProcessingContext
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
@@ -17,14 +20,15 @@ def map_xml_component_generator(request):
         if not all([source_file, destination_file, excel_file]):
             return JsonResponse({'error': 'Missing one or more files'}, status=400)
 
+        source_file_type = FileTypeChecker.get_file_type(source_file)
+        destination_file_type = FileTypeChecker.get_file_type(destination_file)
+        
         source_data = source_file.read()
         destination_data = destination_file.read()
         excel_data = excel_file.read()
-
-        print('Files received')
         
         print('Processing files...')
-        processed_result = MappingService.process_mapping_files(source_data, destination_data, excel_data)
+        processed_result = MappingService.process_mapping_files(source_data, destination_data, excel_data,source_file_type,destination_file_type)
 
         print('Files processed')
         componenetId = ComponentService.extract_component_id(processed_result)
@@ -54,9 +58,28 @@ def index(request):
 @api_view(['POST'])
 def profile_xml_generator(request):
     try:
-        data = request.data
-        xml_response = ProfileComponentGenerator.generate_profile_xml(data,True)
+        file_type = request.POST.get('type')
+        data = request.POST.get('content')
+        print("Request received")
+        print(f"File type: {file_type}")
+        print(f"Data: {data}")
+
+        if file_type == 'json' or file_type == 'JSON':
+            strategy = JSONProcessor()
+        elif file_type == 'xml' or file_type == 'XML':
+            strategy = XMLProcessor()
+        else:
+            return JsonResponse({'error': 'Unsupported type'}, status=400)
+
+        # Initialize the context with the selected strategy
+        context = FileProcessingContext(strategy)
+
+        # Process and get result
+        xml_response = context.execute(data)
+        
         xml_boomi_response = BoomiComponentUploader.upload_component(xml_response)
+        print("Uploaded component successfully")
+        print(xml_boomi_response)
         componenetId = ComponentService.extract_component_id(xml_boomi_response)
 
         return JsonResponse({
