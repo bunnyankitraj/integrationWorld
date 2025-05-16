@@ -6,6 +6,7 @@ from datetime import datetime
 import re
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 import logging
+from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +107,7 @@ def generate_boomi_map(
 ):
     try:
         logger.info(f"Reading Excel file from uploaded content")
-        df = pd.read_excel(excel_data, sheet_name="Field Mapping")
+        df = pd.read_excel(BytesIO(excel_data), sheet_name="Field Mapping")
         df = df[[target_col, source_col]].dropna()
         logger.info(f"Found {len(df)} mapping entries in Excel")
     except Exception as e:
