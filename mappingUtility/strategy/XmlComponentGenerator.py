@@ -12,10 +12,7 @@ logger = logging.getLogger(__name__)
 class XMLProcessor(FileProcessor):
     def process(self, file_content):
         logger.info("Processing XML file content.")
-        # Clean the XML content
-        logger.info(f"Cleaning XML content. {file_content}")
         cleaned_content = XmlCleaner.generate_sample_with_all_fields_xml(file_content)
-        logger.info(f"cleaned XML content {cleaned_content}")
         output = XMLProcessor.generate_boomi_xml_from_xml(cleaned_content)
         logger.info("XML output generated successfully.")
         return output
