@@ -1,8 +1,9 @@
 from pathlib import Path
+import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+os.makedirs(LOG_DIR, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'mappingProject.middleware.RequestIDMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -117,3 +119,55 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DEBUG = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'conditional': {
+            '()': 'mappingProject.custom_logging.ConditionalFormatter',
+            'format': '{asctime} {levelname} {name} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'add_request_id': {
+            '()': 'mappingProject.custom_logging.RequestIDFilter',
+        },
+    },
+
+    'handlers': {
+        'timed_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'api.log'),
+            'when': 'H',
+            'interval': 1,
+            'backupCount': 7,
+            'formatter': 'conditional',
+            'filters': ['add_request_id'],
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
+    },
+
+    'loggers': {
+        'django': {
+            'handlers': ['timed_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'mappingUtility': {
+            'handlers': ['timed_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.utils.autoreload': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    }
+}

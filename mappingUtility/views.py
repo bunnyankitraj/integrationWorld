@@ -4,9 +4,30 @@ from django.http import JsonResponse
 import traceback
 from mappingUtility.Utility import ComponentUtilsService
 from mappingUtility.service import BoomiApiService, ExcelMappingGenerator, MappingService,FileTypeChecker
-from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
-from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
-from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+def log_api_request(logger, request, message, level='info'):
+    log_method = getattr(logger, level, logger.info)
+    log_method(
+        message,
+        extra={
+            'method': request.method,
+            'path': request.path,
+            # 'user': getattr(request.user, 'id', None)
+        }
+    )
+
+def sample_api(request):
+    log_api_request(logger, request, "Sample API called")
+    logger.info("Info called")
+    logger.debug("Debugging information")
+    logger.error("Error occurred")
+    logger.warning("Warning message")
+    logger.critical("Critical error")
+    return JsonResponse({'message': 'Success'})
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
