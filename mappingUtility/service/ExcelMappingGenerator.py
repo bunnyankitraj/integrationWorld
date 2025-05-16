@@ -12,8 +12,10 @@ import requests
 import traceback
 from django.http import HttpResponse
 from resources.globlas import GEN_AI_API_KEY,GEN_AI_URL
-
+import logging
 os.path = posixpath
+
+logger = logging.getLogger(__name__)
 
 def read_file_from_resources(file_path):
     with open(file_path, 'r') as file:
@@ -183,12 +185,11 @@ def call_gemini_api(prompt):
             }
         )
         response_json = response.json()
-        # print(f"json: {response_json}")
         ai_response = response_json["candidates"][0]["content"]["parts"][0]["text"]
         cleaned_json = re.sub(r"```json\s*|\s*```", "", ai_response).strip()
         return json.loads(cleaned_json)
     except Exception as e:
-        print(f"API Error: {str(e)}")
+        logger.error(f"API Error: {str(e)}")
         return {}
 
 
@@ -200,10 +201,9 @@ def generate_mapping_prompt(source_fields, target_fields):
 def get_mapping_from_ai(source_fields, target_fields):
     try:
         prompt = generate_mapping_prompt(source_fields, target_fields);
-        # print(f"main prompt: {prompt}")
         return call_gemini_api(prompt)
     except Exception as e:
-        print(f"Mapping Error: {str(e)}")
+        logger.error(f"Mapping Error: {str(e)}")
         return {}
 
 def normalize_confidence(confidence):
@@ -267,7 +267,6 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
     total_dropdown_fields = extra_options + actual_source_fields
 
     for i, path in enumerate(total_dropdown_fields, start=2):
-        # print(path)
         ws_hidden[f"A{i}"] = path
 
     # Define the range for dropdown values
@@ -356,13 +355,13 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
 def main(source_type, source_data, target_type, target_data):
     try:
         source_fields = read_content(source_data, source_type)
-        print(f"Source Fields: {source_fields}")
+        logger.info(f"Source Fields: {source_fields}")
         target_fields = read_content(target_data, target_type)
-        print(f"Target Fields: {target_fields}")
+        logger.info(f"Target Fields: {target_fields}")
         mappings =  get_mapping_from_ai(source_fields, target_fields)
         print(f"Mappings: {mappings}")
         output = create_excel_mapping(mappings, source_fields, target_fields, source_type, target_type)
-        print(f"Excel file created successfully")
+        logger.info(f"Excel file created successfully")
         response = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="AI_Field_Mapping.xlsx"'
         return response

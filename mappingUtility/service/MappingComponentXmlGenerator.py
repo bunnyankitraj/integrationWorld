@@ -5,21 +5,24 @@ from xml.dom import minidom
 from datetime import datetime
 import re
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
+import logging
+
+logger = logging.getLogger(__name__)
 
 def extract_paths_from_json_profile(profile_xml_content):
     try:
-        print(f"Parsing XML content from provided string")
+        logger.info(f"Parsing XML content from provided string")
         root = ET.fromstring(profile_xml_content)
-        print(f"Successfully parsed XML content")
+        logger.info(f"Successfully parsed XML content")
     except Exception as e:
-        print(f"Error parsing XML content: {e}")
+        logger.error(f"Error parsing XML content: {e}")
         return {}
 
     mappings = {}
     for child in root:
         traverse_and_extract_mappings(child, "", "", mappings)
 
-    print(f"Extracted {len(mappings)} field mappings from profile XML")
+    logger.info(f"Extracted {len(mappings)} field mappings from profile XML")
     return mappings
 
 def extract_main_node(parent_path):
@@ -54,7 +57,7 @@ def traverse_and_extract_mappings(element, parent_name_path, parent_key_path, ma
             "name_path": current_name_path,
             "key_path": current_key_path
         }
-        print(f"Found field: {element_name} -> {current_name_path} ({current_key_path})")
+        logger.info(f"Found field: {element_name} -> {current_name_path} ({current_key_path})")
 
     for child in element:
         traverse_and_extract_mappings(child, current_name_path, current_key_path, mappings)
@@ -102,28 +105,28 @@ def generate_boomi_map(
     to_profile_id
 ):
     try:
-        print(f"Reading Excel file from uploaded content")
+        logger.info(f"Reading Excel file from uploaded content")
         df = pd.read_excel(excel_data, sheet_name="Field Mapping")
         df = df[[target_col, source_col]].dropna()
-        print(f"Found {len(df)} mapping entries in Excel")
+        logger.info(f"Found {len(df)} mapping entries in Excel")
     except Exception as e:
-        print(f"Error reading Excel file: {e}")
+        logger.error(f"Error reading Excel file: {e}")
         return None
 
-    print(f"Processing source component XML: {source_component_xml_path}")
+    logger.info(f"Processing source component XML: {source_component_xml_path}")
     source_mappings = extract_paths_from_json_profile(source_component_xml_path)
-    print(f"Found {len(source_mappings)} mappings in source component XML")
-    print(f"Source mappings: {source_mappings}")
+    logger.info(f"Found {len(source_mappings)} mappings in source component XML")
+    logger.info(f"Source mappings: {source_mappings}")
 
-    print(f"Processing target component XML: {target_component_xml_path}")
+    logger.info(f"Processing target component XML: {target_component_xml_path}")
     target_mappings = extract_paths_from_json_profile(target_component_xml_path)
-    print(f"Found {len(target_mappings)} mappings in target component XML")
-    print(f"Target mappings: {target_mappings}")
+    logger.info(f"Found {len(target_mappings)} mappings in target component XML")
+    logger.info(f"Target mappings: {target_mappings}")
 
     if not source_mappings:
-        print("Warning: No mappings found in source component XML")
+        logger.warning("Warning: No mappings found in source component XML")
     if not target_mappings:
-        print("Warning: No mappings found in target component XML")
+        logger.warning("Warning: No mappings found in target component XML")
 
     component = create_boomi_component()
     obj = SubElement(component, "bns:object")
@@ -140,8 +143,8 @@ def generate_boomi_map(
         source_field_name = normalize_field_name(source_field)
         target_field_name = normalize_field_name(target_field)
 
-        print(f"Processing mapping: {source_field} -> {target_field}")
-        print(f"Normalized: {source_field_name} -> {target_field_name}")
+        logger.info(f"Processing mapping: {source_field} -> {target_field}")
+        logger.info(f"Normalized: {source_field_name} -> {target_field_name}")
 
         source_info = source_mappings.get(source_field_name)
         target_info = target_mappings.get(target_field_name)
@@ -159,19 +162,19 @@ def generate_boomi_map(
                     break
 
         if not source_info:
-            print(f"Source mappings available: {len(source_mappings)} entries")
-            print(f"Details for source mappings: {source_mappings}")
-            print(f"⚠️ Warning: No mapping found for source field: {source_field} (Normalized: {source_field_name}, Info: {source_info})")
+            logger.warning(f"Source mappings available: {len(source_mappings)} entries")
+            logger.warning(f"Details for source mappings: {source_mappings}")
+            logger.warning(f"⚠️ Warning: No mapping found for source field: {source_field} (Normalized: {source_field_name}, Info: {source_info})")
             continue
         if not target_info:
-            print(f"⚠️ Warning: No mapping found for target field: {target_field}")
+            logger.warning(f"⚠️ Warning: No mapping found for target field: {target_field}")
             continue
 
         from_key = extract_final_key(source_info["key_path"])
         to_key = extract_final_key(target_info["key_path"])
 
         if not from_key or not to_key:
-            print(f"⚠️ Skipping mapping due to missing key in path: {source_field} -> {target_field}")
+            logger.warning(f"⚠️ Skipping mapping due to missing key in path: {source_field} -> {target_field}")
             continue
 
         mapping_attrs = {
@@ -187,7 +190,7 @@ def generate_boomi_map(
 
         SubElement(mappings_element, "Mapping", mapping_attrs)
         successful_mappings += 1
-        print(f"✓ Added mapping: {source_info['name_path']} -> {target_info['name_path']}")
+        logger.info(f"✓ Added mapping: {source_info['name_path']} -> {target_info['name_path']}")
 
     SubElement(map_, "Functions", {"optimizeExecutionOrder": "true"})
     SubElement(map_, "Defaults")
@@ -195,12 +198,12 @@ def generate_boomi_map(
 
     xml_str = minidom.parseString(tostring(component)).toprettyxml(indent="  ")
 
-    print(f"✅ Successfully created {successful_mappings} field mappings out of {len(df)} total.")
+    logger.info(f"✅ Successfully created {successful_mappings} field mappings out of {len(df)} total.")
     return xml_str
 
 
 if __name__ == "__main__":
-    print("Starting Boomi mapping generation script...")
+    logger.info("Starting Boomi mapping generation script...")
 
     xml_output = generate_boomi_map(
         excel_data="AI_Field_Mapping.xlsx",
@@ -216,6 +219,6 @@ if __name__ == "__main__":
         output_path = "generated_boomi_map.xml"
         with open(output_path, "w") as f:
             f.write(xml_output)
-        print(f"✅ Boomi XML generated successfully at {output_path}")
+        logger.info(f"✅ Boomi XML generated successfully at {output_path}")
     else:
-        print("❌ Failed to generate Boomi XML")
+        logger.error("❌ Failed to generate Boomi XML")

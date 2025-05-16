@@ -2,26 +2,15 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.Utility import ComponentUtilsService
+from mappingUtility.Utility import ComponentUtilsService,LogUtils
 from mappingUtility.service import BoomiApiService, ExcelMappingGenerator, MappingService,FileTypeChecker
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-def log_api_request(logger, request, message, level='info'):
-    log_method = getattr(logger, level, logger.info)
-    log_method(
-        message,
-        extra={
-            'method': request.method,
-            'path': request.path,
-            # 'user': getattr(request.user, 'id', None)
-        }
-    )
-
 def sample_api(request):
-    log_api_request(logger, request, "Sample API called")
+    LogUtils.log_api_request(logger, request, "Sample API called")
     logger.info("Info called")
     logger.debug("Debugging information")
     logger.error("Error occurred")
@@ -31,8 +20,9 @@ def sample_api(request):
 
 @api_view(['POST'])
 def map_xml_component_generator(request):
+    LogUtils.log_api_request(logger, request, "map_xml_component_generator")
     try:
-        print("Request received")
+        logger.info("Request received")
         source_file = request.FILES.get('source')
         destination_file = request.FILES.get('destination')
         excel_file = request.FILES.get('excel')
@@ -47,10 +37,10 @@ def map_xml_component_generator(request):
         destination_data = destination_file.read()
         excel_data = excel_file.read()
         
-        print('Processing files...')
+        logger.info('Processing files...')
         processed_result = MappingService.process_mapping_files(source_data, destination_data, excel_data,source_file_type,destination_file_type)
 
-        print('Files processed')
+        logger.info('Files processed')
         componenetId = ComponentUtilsService.extract_component_id(processed_result)
 
         # Return the processed result and componentId
@@ -77,6 +67,7 @@ def index(request):
 
 @api_view(['POST'])
 def profile_xml_generator(request):
+    LogUtils.log_api_request(logger, request, "profile_xml_generator")
     try:
         file_type = request.POST.get('type')
         content_file = request.FILES.get('content')
@@ -85,8 +76,8 @@ def profile_xml_generator(request):
         xml_response = MappingService.profile_component_generator(content,file_type)
         
         xml_boomi_response = BoomiApiService.upload_component(xml_response)
-        print("Uploaded component successfully")
-        print(xml_boomi_response)
+        logger.info("Uploaded component successfully")
+        logger.info(xml_boomi_response)
         componenetId = ComponentUtilsService.extract_component_id(xml_boomi_response)
 
         return JsonResponse({
@@ -107,6 +98,7 @@ def profile_xml_generator(request):
 
 @api_view(['POST'])
 def mapping_excel_generator(request):
+    LogUtils.log_api_request(logger, request, "mapping_excel_generator")
     try:
         source_type = request.POST.get('source_type')
         destination_type = request.POST.get('destination_type')

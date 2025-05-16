@@ -4,10 +4,13 @@ import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
+import logging
+
+logger = logging.getLogger(__name__)
 
 class XMLProcessor(FileProcessor):
     def process(self, file_content):
-        print("Processing XML file content.")
+        logger.info("Processing XML file content.")
         output = XMLProcessor.generate_boomi_xml_from_xml(file_content)
         return output
 
@@ -104,7 +107,7 @@ class XMLProcessor(FileProcessor):
         try:
             root_element = ET.fromstring(xml_data)
         except ET.ParseError as e:
-            print(f"❌ Failed to parse input XML: {e}")
+            logger.error(f"❌ Failed to parse input XML: {e}")
             raise
 
         component = XMLProcessor.create_component_root(is_source)
@@ -115,7 +118,7 @@ class XMLProcessor(FileProcessor):
 
 
     # def main():
-    #     print("🚀 Starting Boomi XML profile generation from input XML")
+    #     logger.error("🚀 Starting Boomi XML profile generation from input XML")
 
     #     xml_data = '''<Company>
     #         <Department name="Engineering">
@@ -132,10 +135,10 @@ class XMLProcessor(FileProcessor):
     #         output = XMLProcessor.generate_boomi_xml_from_xml(xml_data)
     #         with open("boomi_xml_output.xml", "w") as f:
     #             f.write(output)
-    #         print("✅ Boomi XML profile written to boomi_xml_output.xml")
+    #         logger.error("✅ Boomi XML profile written to boomi_xml_output.xml")
 
     #     except Exception as e:
-    #         print(f"❌ Unexpected error occurred: {e}")
+    #         logger.error(f"❌ Unexpected error occurred: {e}")
 
 
     # if __name__ == "__main__":

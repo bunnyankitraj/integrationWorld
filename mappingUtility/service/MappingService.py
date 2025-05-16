@@ -3,6 +3,9 @@ from mappingUtility.service import BoomiApiService, MappingComponentXmlGenerator
 from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
 from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
 from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
+import logging
+
+logger = logging.getLogger(__name__)
 
 def profile_component_generator(file_content,file_type):
         if file_type == 'json' or file_type == 'JSON':
@@ -19,17 +22,17 @@ def profile_component_generator(file_content,file_type):
 
 def process_mapping_files(source_data, destination_data, excel_data, source_file_type, destination_file_type):
     try:
-        print("Starting process_mapping_files execution.")
+        logger.info("Starting process_mapping_files execution.")
         
         sourceTempXml = profile_component_generator(source_data, source_file_type)
         sourceXml = BoomiApiService.upload_component(sourceTempXml)
         sourceComponentId = ComponentUtilsService.extract_component_id(sourceXml)
-        print(f"Extracted source component ID: {sourceComponentId}")
+        logger.info(f"Extracted source component ID: {sourceComponentId}")
         
         destinationTempXml = profile_component_generator(destination_data, destination_file_type)
         destinationXml = BoomiApiService.upload_component(destinationTempXml)
         destinationComponentId = ComponentUtilsService.extract_component_id(destinationXml)
-        print(f"Extracted destination component ID: {destinationComponentId}")
+        logger.info(f"Extracted destination component ID: {destinationComponentId}")
         
         mapTempComponentXml = MappingComponentXmlGenerator.generate_boomi_map(
             excel_data,
@@ -40,13 +43,13 @@ def process_mapping_files(source_data, destination_data, excel_data, source_file
             from_profile_id=sourceComponentId,
             to_profile_id=destinationComponentId
         )
-        print("Generated Boomi map component XML.")
+        logger.info("Generated Boomi map component XML.")
         
         mapComponentXml = BoomiApiService.upload_component(mapTempComponentXml)
-        print("Uploaded map component.")
+        logger.info("Uploaded map component.")
         
         return mapComponentXml
 
     except Exception as e:
-        print(f"An error occurred during process_mapping_files execution: {e}")
+        logger.error(f"An error occurred during process_mapping_files execution: {e}")
         raise
