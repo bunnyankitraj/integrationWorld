@@ -5,13 +5,19 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 import logging
+from mappingUtility.Utility import XmlCleaner
 
 logger = logging.getLogger(__name__)
 
 class XMLProcessor(FileProcessor):
     def process(self, file_content):
         logger.info("Processing XML file content.")
-        output = XMLProcessor.generate_boomi_xml_from_xml(file_content)
+        # Clean the XML content
+        logger.info(f"Cleaning XML content. {file_content}")
+        cleaned_content = XmlCleaner.generate_sample_with_all_fields_xml(file_content)
+        logger.info(f"cleaned XML content {cleaned_content}")
+        output = XMLProcessor.generate_boomi_xml_from_xml(cleaned_content)
+        logger.info("XML output generated successfully.")
         return output
 
     def add_data_format(parent):
