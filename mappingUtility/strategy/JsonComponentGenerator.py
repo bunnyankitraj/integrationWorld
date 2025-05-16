@@ -15,7 +15,7 @@ class JSONProcessor(FileProcessor):
         file_content = JsonCleaner.main(file_content)
         xml_output = JSONProcessor.generate_profile_xml(file_content)
         logger.info("XML output generated successfully.")
-        logger.info(xml_output)
+        # logger.info(xml_output)
         return xml_output
 
     def create_component_root(is_source=True):
@@ -134,38 +134,3 @@ class JSONProcessor(FileProcessor):
             JSONProcessor.process_object_entries(obj, json_data, key_counter)
 
         return parseString(tostring(component, encoding="utf-8")).toprettyxml(indent="  ", encoding="UTF-8").decode("utf-8")
-
-    # # --------------------------- Main Entry ---------------------------
-
-    # def main():
-    #     # ✅ Raw JSON string input
-    #     raw_json = '''
-    #     {
-    #         "Company": {
-    #             "Department": {
-    #                 "name": "Engineering",
-    #                 "Employee": {
-    #                     "ID": 101,
-    #                     "Name": "John Doe",
-    #                     "Role": "Software Developer",
-    #                     "Salary": 80000
-    #                 }
-    #             }
-    #         }
-    #     }
-    #     '''
-
-    #     # Parse raw JSON string to OrderedDict to preserve key order
-
-    #     xml_output = JSONProcessor.generate_profile_xml(raw_json)
-    #     # xml_output = generate_profile_xml(raw_json)
-
-    #     with open("sourceProfile.xml", "w") as f:
-    #         f.write(xml_output)
-
-    #     print("✅ Boomi XML generated successfully.")
-
-
-    # if __name__ == "__main__":
-    #     main()
-        

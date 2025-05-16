@@ -113,12 +113,12 @@ def generate_boomi_map(
         logger.error(f"Error reading Excel file: {e}")
         return None
 
-    logger.info(f"Processing source component XML: {source_component_xml_path}")
+    # logger.info(f"Processing source component XML: {source_component_xml_path}")
     source_mappings = extract_paths_from_json_profile(source_component_xml_path)
     logger.info(f"Found {len(source_mappings)} mappings in source component XML")
     logger.info(f"Source mappings: {source_mappings}")
 
-    logger.info(f"Processing target component XML: {target_component_xml_path}")
+    # logger.info(f"Processing target component XML: {target_component_xml_path}")
     target_mappings = extract_paths_from_json_profile(target_component_xml_path)
     logger.info(f"Found {len(target_mappings)} mappings in target component XML")
     logger.info(f"Target mappings: {target_mappings}")

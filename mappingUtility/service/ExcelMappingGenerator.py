@@ -359,7 +359,7 @@ def main(source_type, source_data, target_type, target_data):
         target_fields = read_content(target_data, target_type)
         logger.info(f"Target Fields: {target_fields}")
         mappings =  get_mapping_from_ai(source_fields, target_fields)
-        print(f"Mappings: {mappings}")
+        logger.info(f"Mappings: {mappings}")
         output = create_excel_mapping(mappings, source_fields, target_fields, source_type, target_type)
         logger.info(f"Excel file created successfully")
         response = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

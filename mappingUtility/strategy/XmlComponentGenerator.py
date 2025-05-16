@@ -116,31 +116,3 @@ class XMLProcessor(FileProcessor):
 
         return parseString(tostring(component, encoding="utf-8")).toprettyxml(indent="  ", encoding="UTF-8").decode("utf-8")
 
-
-    # def main():
-    #     logger.error("🚀 Starting Boomi XML profile generation from input XML")
-
-    #     xml_data = '''<Company>
-    #         <Department name="Engineering">
-    #             <Employee>
-    #                 <ID>101</ID>
-    #                 <Name>John Doe</Name>
-    #                 <Role>Software Developer</Role>
-    #                 <Salary>80000</Salary>
-    #             </Employee>
-    #         </Department>
-    #     </Company>'''
-
-    #     try:
-    #         output = XMLProcessor.generate_boomi_xml_from_xml(xml_data)
-    #         with open("boomi_xml_output.xml", "w") as f:
-    #             f.write(output)
-    #         logger.error("✅ Boomi XML profile written to boomi_xml_output.xml")
-
-    #     except Exception as e:
-    #         logger.error(f"❌ Unexpected error occurred: {e}")
-
-
-    # if __name__ == "__main__":
-    #     main()
-

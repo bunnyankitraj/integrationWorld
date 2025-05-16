@@ -22,7 +22,7 @@ def sample_api(request):
 def map_xml_component_generator(request):
     LogUtils.log_api_request(logger, request, "map_xml_component_generator")
     try:
-        logger.info("Request received")
+        logger.info("Request received for map_xml_component_generator")
         source_file = request.FILES.get('source')
         destination_file = request.FILES.get('destination')
         excel_file = request.FILES.get('excel')
@@ -31,7 +31,10 @@ def map_xml_component_generator(request):
             return JsonResponse({'error': 'Missing one or more files'}, status=400)
 
         source_file_type = FileTypeChecker.get_file_type(source_file)
+        logger.info(f"Source file type detected: {source_file_type}")
+        
         destination_file_type = FileTypeChecker.get_file_type(destination_file)
+        logger.info(f"Destination file type detected: {destination_file_type}")
         
         source_data = source_file.read()
         destination_data = destination_file.read()
