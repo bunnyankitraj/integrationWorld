@@ -9,7 +9,6 @@ class RequestIDFilter(logging.Filter):
         # These fields can be set by views using logger with `extra=`
         record.method = getattr(record, 'method', None)
         record.path = getattr(record, 'path', None)
-        record.user = getattr(record, 'user', None)
         return True
 
 
@@ -24,7 +23,6 @@ class ConditionalFormatter(logging.Formatter):
             extras.append(f"[method={record.method}]")
         if getattr(record, 'path', None):
             extras.append(f"[path={record.path}]")
-        if getattr(record, 'user', None):
-            extras.append(f"[user={record.user}]")
+
 
         return f"{base_message} {' '.join(extras)}"

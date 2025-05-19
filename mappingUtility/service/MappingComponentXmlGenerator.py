@@ -2,9 +2,8 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
-from datetime import datetime
 import re
-from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
+from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url,map_name
 import logging
 from io import BytesIO
 
@@ -79,14 +78,12 @@ def create_boomi_component():
         "xmlns:xsi": boomi_component_xsi_url,
         "branchId": branch_id,
         "branchName": branch_name,
-        "createdDate": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "currentVersion": "true",
         "deleted": "false",
         "folderFullPath": folder_path,
         "folderId": folder_id,
         "folderName": folder_path.split("/")[-1],
-        "modifiedDate": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
-        "name": "Generated Map from Excel",
+        "name": map_name,
         "type": "transform.map",
         "version": "1"
     })

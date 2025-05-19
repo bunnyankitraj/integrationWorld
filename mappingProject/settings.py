@@ -5,10 +5,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
 os.makedirs(LOG_DIR, exist_ok=True)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ykov_5&3&v40_(yvbn7nk!o-*nl#tv!m8s6%8p2!zw_)j*ba84'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -28,8 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mappingUtility',
     'corsheaders',
-    'rest_framework',
-    # 'api_view'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -63,20 +58,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mappingProject.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {

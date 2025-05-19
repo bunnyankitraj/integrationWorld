@@ -1,5 +1,5 @@
 from mappingUtility.Utility import ComponentUtilsService
-from mappingUtility.service import BoomiApiService, MappingComponentXmlGenerator, FileTypeChecker
+from mappingUtility.service import BoomiApiService, MappingComponentXmlGenerator
 from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
 from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
 from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
