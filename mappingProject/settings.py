@@ -129,8 +129,8 @@ LOGGING = {
         'timed_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(LOG_DIR, 'api.log'),
-            # 'filename': os.path.join(LOG_DIR, f'api.{datetime.now().strftime("%Y-%m-%d")}.log'),
+            # 'filename': os.path.join(LOG_DIR, 'api.log'),
+            'filename': os.path.join(LOG_DIR, f'api.{datetime.now().strftime("%Y-%m-%d")}.log'),
             'when': 'H',
             'interval': 1,
             'backupCount': 7,
