@@ -130,7 +130,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             # 'filename': os.path.join(LOG_DIR, 'api.log'),
-            'filename': os.path.join(LOG_DIR, f'api.{datetime.now().strftime("%Y-%m-%d")}.log'),
+            'filename': os.path.join(LOG_DIR, f'api_{datetime.now().strftime("%d-%m-%Y")}.log'),
             'when': 'H',
             'interval': 1,
             'backupCount': 7,
