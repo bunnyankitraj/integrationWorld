@@ -3,6 +3,7 @@ import json
 import logging
 
 logger = logging.getLogger(__name__)
+
 def get_file_type(file):
     try:
         filename = file.name.lower()
@@ -10,6 +11,10 @@ def get_file_type(file):
             return 'json'
         elif filename.endswith('.xml'):
             return 'xml'
+        elif filename.endswith('.edi') or filename.endswith('.edifact'):
+            return 'edifact'
+        elif filename.endswith('.x12'):
+            return 'x12'
 
         file.seek(0)
         content = file.read(2048).decode('utf-8').strip()
@@ -29,7 +34,13 @@ def get_file_type(file):
             logger.error("Error detecting ElementTree.ParseError.")
             pass
 
+        if content.startswith("UNA") or content.startswith("UNB"):
+            return 'edifact'
+
+        if content.startswith("ISA"):
+            return 'x12'
+
         return 'unknown'
-    except Exception:
-        logger.error("Error detecting file type.")
+    except Exception as e:
+        logger.error(f"Error detecting file type: {e}")
         return 'unknown'

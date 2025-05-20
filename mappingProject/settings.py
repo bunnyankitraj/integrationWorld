@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
@@ -129,6 +130,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(LOG_DIR, 'api.log'),
+            # 'filename': os.path.join(LOG_DIR, f'api.{datetime.now().strftime("%Y-%m-%d")}.log'),
             'when': 'H',
             'interval': 1,
             'backupCount': 7,

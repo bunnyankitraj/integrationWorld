@@ -76,44 +76,80 @@ def extract_xml_paths(element, parent_path="", seen_paths=None):
     return paths
 
 def extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":"):
-    fields = []
-    segment_counts = Counter()
-    seen_paths = set()
-    
-    segments = content.strip().split(seg_sep)
-    for segment in segments:
-        parts = segment.strip().split(elem_sep)  
-        segment_type = parts[0].strip()
-        segment_counts[segment_type] += 1  
-
-    for segment in segments:
-        segment = segment.strip()
-        if not segment:
-            continue
+    try:
+        logger.debug("Starting EDIFACT field extraction")
+        fields = []  # List to store extracted field paths
+        segment_counts = Counter()  # Counter to track occurrences of each segment type
+        seen_paths = set()  # Set to track already processed field paths
         
-        parts = segment.strip().split(elem_sep)
-        segment_type = parts[0].strip()
-        qualifier = parts[1] if len(parts) > 1 else ""
-       
-        for i, element in enumerate(parts[1:], start=1):
-            sub_elements = element.split(sub_elem_sep)
-            
-            field_index = str(i)
-            if i < 10:
-                field_index = "0" + str(i)
+        # Ensure content is a string (decode if it's bytes)
+        if isinstance(content, bytes):
+            content = content.decode('utf-8')
 
-            if len(sub_elements) > 1:
-                for j, sub_element in enumerate(sub_elements, start=1):
-                    field_path = f"{segment_type}{field_index}.{j}_{qualifier}" if segment_counts[segment_type] > 1 else f"{segment_type}{field_index}.{j}"
-                    if field_path not in seen_paths and sub_element.strip():
+        # Split the content into segments using the segment separator
+        segments = content.strip().split(seg_sep)
+        logger.debug(f"Total segments found: {len(segments)}")
+        for segment in segments:
+            # Split each segment into parts using the element separator
+            parts = segment.strip().split(elem_sep)  
+            segment_type = parts[0].strip()  # Extract the segment type (first part)
+            segment_counts[segment_type] += 1  # Increment the count for this segment type
+            logger.debug(f"Processed segment type: {segment_type}, count: {segment_counts[segment_type]}")
+
+        # Process each segment to extract field paths
+        for segment_index, segment in enumerate(segments):
+            segment = segment.strip()
+            if not segment:  # Skip empty segments
+                logger.debug("Skipping empty segment")
+                continue
+            
+            # Determine the base path (e.g., header, summary, or trailer)
+            if segment_index == 0:
+                base_path = "header"
+            elif segment_index == len(segments) - 1:
+                base_path = "trailer"
+            else:
+                base_path = "summary"
+            
+            # Split the segment into parts using the element separator
+            parts = segment.strip().split(elem_sep)
+            segment_type = parts[0].strip()  # Extract the segment type
+            qualifier = parts[1] if len(parts) > 1 else ""  # Extract the qualifier if present
+            logger.debug(f"Processing segment: {segment_type}, qualifier: {qualifier}")
+        
+            # Iterate over the elements in the segment (excluding the segment type)
+            for i, element in enumerate(parts[1:], start=1):
+                # Split the element into sub-elements using the sub-element separator
+                sub_elements = element.split(sub_elem_sep)
+                
+                # Format the field index with leading zero for single-digit indices
+                field_index = str(i)
+                if i < 10:
+                    field_index = "0" + str(i)
+
+                # If the element contains sub-elements, process each sub-element
+                if len(sub_elements) > 1:
+                    for j, sub_element in enumerate(sub_elements, start=1):
+                        # Construct the field path with sub-element index and full path
+                        field_path = f"{base_path}.{segment_type}{field_index}" if segment_counts[segment_type] > 1 else f"{base_path}.{segment_type}{field_index}"
+                        # Add the field path if it hasn't been processed and the sub-element is not empty
+                        if field_path not in seen_paths and sub_element.strip():
+                            seen_paths.add(field_path)
+                            fields.append(field_path)
+                            logger.debug(f"Added field path: {field_path}")
+                else:
+                    # Construct the field path for elements without sub-elements, including the full path
+                    field_path = f"{base_path}.{segment_type}{field_index}" if segment_counts[segment_type] > 1 else f"{base_path}.{segment_type}.{field_index}"
+                    # Add the field path if it hasn't been processed
+                    if field_path not in seen_paths:
                         seen_paths.add(field_path)
                         fields.append(field_path)
-            else:
-                field_path = f"{segment_type}{field_index}_{qualifier}" if segment_counts[segment_type] > 1 else f"{segment_type}{field_index}"
-                if field_path not in seen_paths:
-                    seen_paths.add(field_path)
-                    fields.append(field_path)
-    return fields
+                        logger.debug(f"Added field path: {field_path}")
+        logger.debug(f"Total fields extracted: {len(fields)}")
+        return fields
+    except Exception as e:
+        logger.error(f"Error during EDIFACT field extraction: {str(e)}")
+        raise
 
 def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     fields = []
@@ -353,6 +389,10 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
     
 
 def main(source_type, source_data, target_type, target_data):
+    logger.info(f"Source Type: {source_type}")
+    logger.info(f"Target Type: {target_type}")
+    # logger.info(f"Source Data: {source_data}")
+    # logger.info(f"Target Data: {target_data}")
     try:
         source_fields = read_content(source_data, source_type)
         logger.info(f"Source Fields: {source_fields}")
@@ -368,10 +408,11 @@ def main(source_type, source_data, target_type, target_data):
         
     except Exception as e:
         tb = traceback.format_exc()
-        return json.dumps({
+        error_response = json.dumps({
             "status": "error",
             "message": str(e),
             "trace": tb,
             "line": tb.splitlines()[-1] if tb else "Unknown"
         })
+        return HttpResponse(error_response, content_type="application/json", status=500)
 

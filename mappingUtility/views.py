@@ -101,6 +101,7 @@ def profile_xml_generator(request):
 
 @api_view(['POST'])
 def mapping_excel_generator(request):
+    logger.info("Request received for mapping_excel_generator")
     LogUtils.log_api_request(logger, request, "mapping_excel_generator")
     try:
         source_type = request.POST.get('source_type')

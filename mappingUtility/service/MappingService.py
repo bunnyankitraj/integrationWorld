@@ -2,13 +2,16 @@ from mappingUtility.Utility import ComponentUtilsService
 from mappingUtility.service import BoomiApiService, MappingComponentXmlGenerator
 from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
 from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
+from mappingUtility.strategy.EDIFACTComponentGenerator import EDIFACTProcessor
 from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
 import logging
 
 logger = logging.getLogger(__name__)
 
 def profile_component_generator(file_content,file_type):
-        if file_type == 'json' or file_type == 'JSON':
+        if file_type == 'edi' or file_type == 'EDIFACT' or file_type == 'edifact':
+            strategy = EDIFACTProcessor()
+        elif file_type == 'json' or file_type == 'JSON':
             strategy = JSONProcessor()
         elif file_type == 'xml' or file_type == 'XML':
             strategy = XMLProcessor()

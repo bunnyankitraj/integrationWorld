@@ -166,6 +166,8 @@ def generate_boomi_map(
             continue
         if not target_info:
             logger.warning(f"⚠️ Warning: No mapping found for target field: {target_field}")
+            logger.warning(f"Target mappings available: {len(target_mappings)} entries")
+            # logger.warning(f"Details for target mappings: {target_mappings}")
             continue
 
         from_key = extract_final_key(source_info["key_path"])
