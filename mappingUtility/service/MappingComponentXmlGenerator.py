@@ -57,16 +57,27 @@ def traverse_and_extract_mappings(element, parent_name_path, parent_key_path, ma
             "name_path": current_name_path,
             "key_path": current_key_path
         }
-        logger.info(f"Found field: {element_name} -> {current_name_path} ({current_key_path})")
+        # logger.info(f"Found field: {element_name} -> {current_name_path} ({current_key_path})")
 
     for child in element:
         traverse_and_extract_mappings(child, current_name_path, current_key_path, mappings)
 
 def normalize_field_name(field_name):
-    field_name = re.sub(r'\[\*\]', '', field_name)
-    field_name = field_name.replace('.', '/')
-    return field_name.lstrip('/').strip()
+    field_name = re.sub(r'\[\*\]', '', field_name).lstrip('/').strip()
 
+    # Handle dot-separated input
+    if '.' in field_name and '/' not in field_name:
+        parts = field_name.split('.')
+
+        # Check if the last two parts form something like "GIR04.3"
+        if len(parts) >= 2 and re.match(r'^\d+$', parts[-2][-2:]) and re.match(r'^\d+$', parts[-1]):
+            # Combine last two parts with dot, others with slash
+            new_last = parts[-2] + '.' + parts[-1]
+            return '/'.join(parts[:-2] + [new_last])
+        else:
+            return '/'.join(parts)
+
+    return field_name
 
 def extract_final_key(path):
     matches = re.findall(r"\[@key='(\d+)'\]", path)
@@ -92,16 +103,7 @@ def create_boomi_component():
     SubElement(component, "bns:description").text = f"Auto-generated field mapping"
     return component
 
-
-def generate_boomi_map(
-    excel_data,
-    source_component_xml_path,
-    target_component_xml_path,
-    source_col,
-    target_col,
-    from_profile_id,
-    to_profile_id
-):
+def generate_boomi_map(excel_data,source_component_xml_path,target_component_xml_path,source_col,target_col,from_profile_id,to_profile_id):
     try:
         logger.info(f"Reading Excel file from uploaded content")
         df = pd.read_excel(BytesIO(excel_data), sheet_name="Field Mapping")
@@ -114,12 +116,12 @@ def generate_boomi_map(
     # logger.info(f"Processing source component XML: {source_component_xml_path}")
     source_mappings = extract_paths_from_json_profile(source_component_xml_path)
     logger.info(f"Found {len(source_mappings)} mappings in source component XML")
-    logger.info(f"Source mappings: {source_mappings}")
+    # logger.info(f"Source mappings: {source_mappings}")
 
     # logger.info(f"Processing target component XML: {target_component_xml_path}")
     target_mappings = extract_paths_from_json_profile(target_component_xml_path)
     logger.info(f"Found {len(target_mappings)} mappings in target component XML")
-    logger.info(f"Target mappings: {target_mappings}")
+    # logger.info(f"Target mappings: {target_mappings}")
 
     if not source_mappings:
         logger.warning("Warning: No mappings found in source component XML")
@@ -141,8 +143,10 @@ def generate_boomi_map(
         source_field_name = normalize_field_name(source_field)
         target_field_name = normalize_field_name(target_field)
 
-        logger.info(f"Processing mapping: {source_field} -> {target_field}")
-        logger.info(f"Normalized: {source_field_name} -> {target_field_name}")
+        # logger.info(f"Processing mapping: {source_field} -> {target_field}")
+        # logger.info(f"Normalized: {source_field_name} -> {target_field_name}")
+        if not source_field_name or not target_field_name:
+            logger.warning(f"⚠️ Skipping empty mapping: {source_field} -> {target_field}")
 
         source_info = source_mappings.get(source_field_name)
         target_info = target_mappings.get(target_field_name)
@@ -161,13 +165,11 @@ def generate_boomi_map(
 
         if not source_info:
             logger.warning(f"Source mappings available: {len(source_mappings)} entries")
-            logger.warning(f"Details for source mappings: {source_mappings}")
             logger.warning(f"⚠️ Warning: No mapping found for source field: {source_field} (Normalized: {source_field_name}, Info: {source_info})")
             continue
         if not target_info:
             logger.warning(f"⚠️ Warning: No mapping found for target field: {target_field}")
             logger.warning(f"Target mappings available: {len(target_mappings)} entries")
-            # logger.warning(f"Details for target mappings: {target_mappings}")
             continue
 
         from_key = extract_final_key(source_info["key_path"])

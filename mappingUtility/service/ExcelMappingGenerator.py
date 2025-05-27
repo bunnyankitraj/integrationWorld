@@ -13,6 +13,8 @@ import traceback
 from django.http import HttpResponse
 from resources.globlas import GEN_AI_API_KEY,GEN_AI_URL
 import logging
+from mappingUtility.Utility import EdifactUtils
+
 os.path = posixpath
 
 logger = logging.getLogger(__name__)
@@ -75,81 +77,10 @@ def extract_xml_paths(element, parent_path="", seen_paths=None):
     
     return paths
 
-def extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":"):
-    try:
-        logger.debug("Starting EDIFACT field extraction")
-        fields = []  # List to store extracted field paths
-        segment_counts = Counter()  # Counter to track occurrences of each segment type
-        seen_paths = set()  # Set to track already processed field paths
-        
-        # Ensure content is a string (decode if it's bytes)
-        if isinstance(content, bytes):
-            content = content.decode('utf-8')
-
-        # Split the content into segments using the segment separator
-        segments = content.strip().split(seg_sep)
-        logger.debug(f"Total segments found: {len(segments)}")
-        for segment in segments:
-            # Split each segment into parts using the element separator
-            parts = segment.strip().split(elem_sep)  
-            segment_type = parts[0].strip()  # Extract the segment type (first part)
-            segment_counts[segment_type] += 1  # Increment the count for this segment type
-            logger.debug(f"Processed segment type: {segment_type}, count: {segment_counts[segment_type]}")
-
-        # Process each segment to extract field paths
-        for segment_index, segment in enumerate(segments):
-            segment = segment.strip()
-            if not segment:  # Skip empty segments
-                logger.debug("Skipping empty segment")
-                continue
-            
-            # Determine the base path (e.g., header, summary, or trailer)
-            if segment_index == 0:
-                base_path = "header"
-            elif segment_index == len(segments) - 1:
-                base_path = "trailer"
-            else:
-                base_path = "summary"
-            
-            # Split the segment into parts using the element separator
-            parts = segment.strip().split(elem_sep)
-            segment_type = parts[0].strip()  # Extract the segment type
-            qualifier = parts[1] if len(parts) > 1 else ""  # Extract the qualifier if present
-            logger.debug(f"Processing segment: {segment_type}, qualifier: {qualifier}")
-        
-            # Iterate over the elements in the segment (excluding the segment type)
-            for i, element in enumerate(parts[1:], start=1):
-                # Split the element into sub-elements using the sub-element separator
-                sub_elements = element.split(sub_elem_sep)
-                
-                # Format the field index with leading zero for single-digit indices
-                field_index = str(i)
-                if i < 10:
-                    field_index = "0" + str(i)
-
-                # If the element contains sub-elements, process each sub-element
-                if len(sub_elements) > 1:
-                    for j, sub_element in enumerate(sub_elements, start=1):
-                        # Construct the field path with sub-element index and full path
-                        field_path = f"{base_path}.{segment_type}{field_index}" if segment_counts[segment_type] > 1 else f"{base_path}.{segment_type}{field_index}"
-                        # Add the field path if it hasn't been processed and the sub-element is not empty
-                        if field_path not in seen_paths and sub_element.strip():
-                            seen_paths.add(field_path)
-                            fields.append(field_path)
-                            logger.debug(f"Added field path: {field_path}")
-                else:
-                    # Construct the field path for elements without sub-elements, including the full path
-                    field_path = f"{base_path}.{segment_type}{field_index}" if segment_counts[segment_type] > 1 else f"{base_path}.{segment_type}.{field_index}"
-                    # Add the field path if it hasn't been processed
-                    if field_path not in seen_paths:
-                        seen_paths.add(field_path)
-                        fields.append(field_path)
-                        logger.debug(f"Added field path: {field_path}")
-        logger.debug(f"Total fields extracted: {len(fields)}")
-        return fields
-    except Exception as e:
-        logger.error(f"Error during EDIFACT field extraction: {str(e)}")
-        raise
+def extract_edifact_fields(edifact_content, seg_sep="'", elem_sep="+", sub_elem_sep=":"):
+    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'D96_ORDERS.xml')
+    xml_content = read_file_from_resources(resource_path)
+    return EdifactUtils.get_edifact_fields(xml_content, edifact_content)
 
 def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     fields = []
