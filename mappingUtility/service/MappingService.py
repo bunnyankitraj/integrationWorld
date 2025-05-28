@@ -3,7 +3,7 @@ from mappingUtility.client import BoomiApiService
 from mappingUtility.service import MappingComponentXmlGenerator
 from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
 from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
-from mappingUtility.strategy.EDIFACTComponentGenerator import EDIFACTProcessor
+from mappingUtility.strategy.EdifactComponentGenerator import EDIFACTProcessor
 from mappingUtility.strategy.ComponentGeneratorContext import FileProcessingContext
 import logging
 
