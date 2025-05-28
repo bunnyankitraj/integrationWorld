@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def upload_component(xml_body):
+def upload_xml_component_to_boomi(xml_body):
     logger.info("Uploading component to Boomi API.")
     try:
         headers = {

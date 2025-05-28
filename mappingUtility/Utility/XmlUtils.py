@@ -30,7 +30,7 @@ def merge_elements(elem1, elem2):
 
     return merged
 
-def generate_sample_with_all_fields_xml(xml_string):
+def generate_generic_xml(xml_string):
     root = ET.fromstring(xml_string)
     if len(root) == 0:
         return xml_string

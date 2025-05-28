@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class JSONProcessor(FileProcessor):
     def process(self, file_content):
         logger.info("Processing JSON file content.")
-        file_content = JsonUtils.main(file_content)
+        file_content = JsonUtils.generate_generic_json(file_content)
         xml_output = JSONProcessor.generate_profile_xml(file_content)
         logger.info("XML output generated successfully.")
         # logger.info(xml_output)

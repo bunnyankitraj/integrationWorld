@@ -1,6 +1,6 @@
 import json
 
-def main(json_content):
+def generate_generic_json(json_content):
     try:
         data = json.loads(json_content)
         
