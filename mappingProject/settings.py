@@ -160,8 +160,8 @@ LOGGING = {
     }
 }
 
-# Ensure the log file is overridden if it already exists
+# Ensure the log file is appended to if it already exists
 log_file_path = os.path.join(LOG_DIR, f'api_{datetime.now().strftime("%d-%m-%Y")}.log')
-if os.path.exists(log_file_path):
+if not os.path.exists(log_file_path):
     with open(log_file_path, 'w'):
-        pass  # Truncate the file to override it
+        pass  # Create the file if it doesn't exist
