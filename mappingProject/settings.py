@@ -129,7 +129,6 @@ LOGGING = {
         'timed_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            # 'filename': os.path.join(LOG_DIR, 'api.log'),
             'filename': os.path.join(LOG_DIR, f'api_{datetime.now().strftime("%d-%m-%Y")}.log'),
             'when': 'H',
             'interval': 1,
@@ -160,3 +159,9 @@ LOGGING = {
         }
     }
 }
+
+# Ensure the log file is overridden if it already exists
+log_file_path = os.path.join(LOG_DIR, f'api_{datetime.now().strftime("%d-%m-%Y")}.log')
+if os.path.exists(log_file_path):
+    with open(log_file_path, 'w'):
+        pass  # Truncate the file to override it
