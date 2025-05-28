@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
-from copy import deepcopy
 from collections import defaultdict
+from copy import deepcopy
+
 
 def merge_elements(elem1, elem2):
     merged = deepcopy(elem1)
@@ -12,7 +13,11 @@ def merge_elements(elem1, elem2):
     for child in elem2:
         matches = tag_to_elements.get(child.tag)
         if matches:
-            if len(matches) == 1 and len(list(matches[0])) == 0 and len(list(child)) == 0:
+            if (
+                len(matches) == 1
+                and len(list(matches[0])) == 0
+                and len(list(child)) == 0
+            ):
                 # Leaf node, merge text
                 if matches[0].text != child.text:
                     matches[0].text = matches[0].text or ""
@@ -30,6 +35,7 @@ def merge_elements(elem1, elem2):
 
     return merged
 
+
 def generate_generic_xml(xml_string):
     root = ET.fromstring(xml_string)
     if len(root) == 0:
@@ -41,7 +47,8 @@ def generate_generic_xml(xml_string):
 
     new_root = ET.Element(root.tag)
     new_root.append(merged)
-    return ET.tostring(new_root, encoding='unicode')
+    return ET.tostring(new_root, encoding="unicode")
+
 
 # # Example input
 # xml_input = '''

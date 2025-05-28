@@ -1,5 +1,6 @@
 from mappingUtility.strategy.ComponentGenerator import FileProcessor
 
+
 class FileProcessingContext:
     def __init__(self, strategy: FileProcessor):
         self._strategy = strategy

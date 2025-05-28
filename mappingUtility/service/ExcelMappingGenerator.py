@@ -1,48 +1,62 @@
-import json
-import xml.etree.ElementTree as ET
-import os
 import io
-from openpyxl import Workbook
-from openpyxl.worksheet.datavalidation import DataValidation
-from openpyxl.styles import PatternFill, Font
-import re
-from collections import Counter
-import posixpath
-import requests
-import traceback
-from django.http import HttpResponse
-from resources.globlas import GEN_AI_API_KEY,GEN_AI_URL
+import json
 import logging
+import os
+import posixpath
+import re
+import traceback
+import xml.etree.ElementTree as ET
+from collections import Counter
+
+import requests
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
+from openpyxl.worksheet.datavalidation import DataValidation
+
 from mappingUtility.Utility import EdifactUtils
+from resources.globlas import GEN_AI_API_KEY, GEN_AI_URL
 
 os.path = posixpath
 
 logger = logging.getLogger(__name__)
 
+
 def read_file_from_resources(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         return file.read()
-    
+
+
 def read_edi_promptes():
-    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'ediPrompt.txt')
+    resource_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        "resources",
+        "ediPrompt.txt",
+    )
     template = read_file_from_resources(resource_path)
     return template
 
+
 def load_main_prompts(source_fields, target_fields):
-    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'mainPrompt.txt')
+    resource_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        "resources",
+        "mainPrompt.txt",
+    )
     template = read_file_from_resources(resource_path)
 
-    source_str = ', '.join(source_fields)
-    target_str = ', '.join(target_fields)
+    source_str = ", ".join(source_fields)
+    target_str = ", ".join(target_fields)
 
     formatted_template = template.format(sourceNames=source_str, targetNames=target_str)
     return formatted_template
+
 
 def extract_json_paths(data, parent_key="", seen_paths=None):
     if seen_paths is None:
         seen_paths = set()
     paths = []
-    
+
     if isinstance(data, dict):
         for key, value in data.items():
             new_key = f"{parent_key}.{key}" if parent_key else key
@@ -58,14 +72,15 @@ def extract_json_paths(data, parent_key="", seen_paths=None):
             seen_paths.add(new_key)
             if data:
                 paths.extend(extract_json_paths(data[0], new_key, seen_paths))
-    
+
     return paths
+
 
 def extract_xml_paths(element, parent_path="", seen_paths=None):
     if seen_paths is None:
         seen_paths = set()
     paths = []
-    
+
     current_path = f"{parent_path}/{element.tag}" if parent_path else element.tag
     if list(element):
         for child in element:
@@ -74,13 +89,21 @@ def extract_xml_paths(element, parent_path="", seen_paths=None):
         if current_path not in seen_paths:
             seen_paths.add(current_path)
             paths.append(current_path)
-    
+
     return paths
 
-def extract_edifact_fields(edifact_content, seg_sep="'", elem_sep="+", sub_elem_sep=":"):
-    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'D96_ORDERS.xml')
+
+def extract_edifact_fields(
+    edifact_content, seg_sep="'", elem_sep="+", sub_elem_sep=":"
+):
+    resource_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        "resources",
+        "D96_ORDERS.xml",
+    )
     xml_content = read_file_from_resources(resource_path)
     return EdifactUtils.get_edifact_fields(xml_content, edifact_content)
+
 
 def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     fields = []
@@ -88,7 +111,7 @@ def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     segment_counts = Counter()
 
     segments = content.strip().split(seg_sep)
-    
+
     for segment in segments:
         parts = segment.strip().split(elem_sep)
         segment_type = parts[0].strip()
@@ -99,33 +122,42 @@ def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
         if not segment:
             continue
 
-        parts = segment.split(elem_sep)  
-        segment_type = parts[0].strip() 
+        parts = segment.split(elem_sep)
+        segment_type = parts[0].strip()
         qualifier = parts[1].strip() if len(parts) > 1 else ""
 
         for i, element in enumerate(parts[1:], start=1):
-            sub_elements = element.split(sub_elem_sep) 
+            sub_elements = element.split(sub_elem_sep)
             field_index = str(i)
             if i < 10:
                 field_index = "0" + str(i)
-                
+
             if len(sub_elements) > 1:
                 for j, sub_element in enumerate(sub_elements, start=1):
-                    field_path = f"{segment_type}{field_index}.{j}_{qualifier}" if segment_counts[segment_type] > 1 else f"{segment_type}{field_index}.{j}"
+                    field_path = (
+                        f"{segment_type}{field_index}.{j}_{qualifier}"
+                        if segment_counts[segment_type] > 1
+                        else f"{segment_type}{field_index}.{j}"
+                    )
                     if field_path not in seen_paths and sub_element.strip():
                         seen_paths.add(field_path)
                         fields.append(field_path)
             else:
-                field_path = f"{segment_type}{field_index}_{qualifier}" if segment_counts[segment_type] > 1 else f"{segment_type}{field_index}"
+                field_path = (
+                    f"{segment_type}{field_index}_{qualifier}"
+                    if segment_counts[segment_type] > 1
+                    else f"{segment_type}{field_index}"
+                )
                 if field_path not in seen_paths:
                     seen_paths.add(field_path)
                     fields.append(field_path)
     return fields
 
+
 def read_content(content, file_type, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     if file_type == "JSON":
         try:
-            json_content = json.loads(content);
+            json_content = json.loads(content)
             return extract_json_paths(json_content)
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON: {e}")
@@ -135,11 +167,14 @@ def read_content(content, file_type, seg_sep="~", elem_sep="*", sub_elem_sep=":"
         except ET.ParseError as e:
             raise ValueError(f"Invalid XML: {e}")
     elif file_type == "EDIFACT":
-        return extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":")
+        return extract_edifact_fields(
+            content, seg_sep="'", elem_sep="+", sub_elem_sep=":"
+        )
     elif file_type == "X12":
         return extract_x12_fields(content, seg_sep, elem_sep, sub_elem_sep)
     else:
         raise ValueError("Unsupported file type")
+
 
 def call_gemini_api(prompt):
     try:
@@ -147,9 +182,9 @@ def call_gemini_api(prompt):
             GEN_AI_URL + GEN_AI_API_KEY,
             headers={"Content-Type": "application/json"},
             json={
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0.3, "maxOutputTokens": 65536}
-            }
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.3, "maxOutputTokens": 65536},
+            },
         )
         response_json = response.json()
         ai_response = response_json["candidates"][0]["content"]["parts"][0]["text"]
@@ -160,18 +195,19 @@ def call_gemini_api(prompt):
         return {}
 
 
-
 def generate_mapping_prompt(source_fields, target_fields):
     prompt_template = load_main_prompts(source_fields, target_fields)
     return prompt_template
 
+
 def get_mapping_from_ai(source_fields, target_fields):
     try:
-        prompt = generate_mapping_prompt(source_fields, target_fields);
+        prompt = generate_mapping_prompt(source_fields, target_fields)
         return call_gemini_api(prompt)
     except Exception as e:
         logger.error(f"Mapping Error: {str(e)}")
         return {}
+
 
 def normalize_confidence(confidence):
     """Ensure confidence is always in percentage format (0-100)."""
@@ -182,17 +218,27 @@ def normalize_confidence(confidence):
     else:
         return round(confidence * 100, 2)
 
+
 def generate_edi_description_prompt(edi_fields):
-    prompt = read_edi_promptes();
+    prompt = read_edi_promptes()
     ediFields = json.dumps(edi_fields, indent=2)
     prompt = prompt.format(ediFields=ediFields)
     return prompt
+
 
 def get_edi_field_descriptions(edi_fields):
     description_prompt = generate_edi_description_prompt(edi_fields)
     return call_gemini_api(description_prompt)
 
-def create_excel_mapping(field_mappings, source_fields, target_fields, source_format, target_format, excel_filename="AI_Field_Mapping.xlsx"):
+
+def create_excel_mapping(
+    field_mappings,
+    source_fields,
+    target_fields,
+    source_format,
+    target_format,
+    excel_filename="AI_Field_Mapping.xlsx",
+):
     """
     Creates an Excel file with field mappings, confidence levels, and dropdowns for source fields.
 
@@ -207,7 +253,13 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
     wb = Workbook()
     ws = wb.active
     ws.title = "Field Mapping"
-    headers = ["Target Field", "Source Field (Dropdown)", "Confidence (%)", "Mapping Type", "Logic"]
+    headers = [
+        "Target Field",
+        "Source Field (Dropdown)",
+        "Confidence (%)",
+        "Mapping Type",
+        "Logic",
+    ]
     ws.append(headers)
 
     # Apply bold formatting to headers
@@ -216,16 +268,24 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
         ws.cell(row=1, column=col_num, value=header).font = bold_font
 
     # Add dropdown options for Mapping Type
-    mapping_type_dv = DataValidation(type="list", formula1='"Direct,Logic"', showDropDown=True)
+    mapping_type_dv = DataValidation(
+        type="list", formula1='"Direct,Logic"', showDropDown=True
+    )
 
     # Create a hidden sheet for dropdown values (fixes 255-character limit issue)
     ws_hidden = wb.create_sheet(title="DropdownValues")
     extra_options = ["<Not Mapped>", "<Constant>", "<No Mapping Needed>", "<Logic>"]
 
     # Define color fills for confidence levels
-    high_conf_fill = PatternFill(start_color="92D050", end_color="92D050", fill_type="solid")  # Green
-    medium_conf_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Yellow
-    low_conf_fill = PatternFill(start_color="FF5050", end_color="FF5050", fill_type="solid")  # Red
+    high_conf_fill = PatternFill(
+        start_color="92D050", end_color="92D050", fill_type="solid"
+    )  # Green
+    medium_conf_fill = PatternFill(
+        start_color="FFFF00", end_color="FFFF00", fill_type="solid"
+    )  # Yellow
+    low_conf_fill = PatternFill(
+        start_color="FF5050", end_color="FF5050", fill_type="solid"
+    )  # Red
 
     # Write Source Fields to the hidden sheet
     ws_hidden["A1"] = "Source Fields"
@@ -317,7 +377,6 @@ def create_excel_mapping(field_mappings, source_fields, target_fields, source_fo
     output.seek(0)  # Important: reset buffer position
     return output
 
-    
 
 def main(source_type, source_data, target_type, target_data):
     logger.info(f"Source Type: {source_type}")
@@ -329,21 +388,27 @@ def main(source_type, source_data, target_type, target_data):
         logger.info(f"Source Fields: {source_fields}")
         target_fields = read_content(target_data, target_type)
         logger.info(f"Target Fields: {target_fields}")
-        mappings =  get_mapping_from_ai(source_fields, target_fields)
+        mappings = get_mapping_from_ai(source_fields, target_fields)
         logger.info(f"Mappings: {mappings}")
-        output = create_excel_mapping(mappings, source_fields, target_fields, source_type, target_type)
+        output = create_excel_mapping(
+            mappings, source_fields, target_fields, source_type, target_type
+        )
         logger.info(f"Excel file created successfully")
-        response = HttpResponse(output.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="AI_Field_Mapping.xlsx"'
+        response = HttpResponse(
+            output.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = 'attachment; filename="AI_Field_Mapping.xlsx"'
         return response
-        
+
     except Exception as e:
         tb = traceback.format_exc()
-        error_response = json.dumps({
-            "status": "error",
-            "message": str(e),
-            "trace": tb,
-            "line": tb.splitlines()[-1] if tb else "Unknown"
-        })
+        error_response = json.dumps(
+            {
+                "status": "error",
+                "message": str(e),
+                "trace": tb,
+                "line": tb.splitlines()[-1] if tb else "Unknown",
+            }
+        )
         return HttpResponse(error_response, content_type="application/json", status=500)
-

@@ -1,10 +1,10 @@
-folder_id = 'Rjo3NjU3NTEy'
-folder_path = 'DPW Sub Account 1/ZZZ_Users/Mapping Automation'
-branch_id = 'Qjo2OTgxOA'
-branch_name = 'main'
-boomi_component_bns_url = 'http://api.platform.boomi.com/'
-boomi_component_xsi_url = 'http://www.w3.org/2001/XMLSchema-instance'
-map_name = 'test'
+folder_id = "Rjo3NjU3NTEy"
+folder_path = "DPW Sub Account 1/ZZZ_Users/Mapping Automation"
+branch_id = "Qjo2OTgxOA"
+branch_name = "main"
+boomi_component_bns_url = "http://api.platform.boomi.com/"
+boomi_component_xsi_url = "http://www.w3.org/2001/XMLSchema-instance"
+map_name = "test"
 
 boomi_endpoint_url = "https://api.boomi.com/api/rest/v1/dpwsubaccount1-FZOWUA/Component"
 auth_token = "cHJhdGlrLmFyb3JhQGV4dC5kcHdvcmxkLmNvbTpJbmZ5QDk4NzY1"
