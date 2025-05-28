@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import traceback
-from mappingUtility.Utility import ComponentUtilsService,LogUtils
+from mappingUtility.Utility import ComponentUtils,LogUtils
 from mappingUtility.service import BoomiApiService, ExcelMappingGenerator, MappingService,FileTypeChecker
 
 import logging
@@ -44,7 +44,7 @@ def map_xml_component_generator(request):
         processed_result = MappingService.process_mapping_files(source_data, destination_data, excel_data,source_file_type,destination_file_type)
 
         logger.info('Files processed')
-        componenetId = ComponentUtilsService.extract_component_id(processed_result)
+        componenetId = ComponentUtils.extract_component_id(processed_result)
 
         # Return the processed result and componentId
         return JsonResponse({
@@ -81,7 +81,7 @@ def profile_xml_generator(request):
         xml_boomi_response = BoomiApiService.upload_component(xml_response)
         logger.info("Uploaded component successfully")
         logger.info(xml_boomi_response)
-        componenetId = ComponentUtilsService.extract_component_id(xml_boomi_response)
+        componenetId = ComponentUtils.extract_component_id(xml_boomi_response)
 
         return JsonResponse({
             'status': "success",

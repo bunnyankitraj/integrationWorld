@@ -1,4 +1,4 @@
-from mappingUtility.Utility import ComponentUtilsService
+from mappingUtility.Utility import ComponentUtils
 from mappingUtility.service import BoomiApiService, MappingComponentXmlGenerator
 from mappingUtility.strategy.JsonComponentGenerator import JSONProcessor
 from mappingUtility.strategy.XmlComponentGenerator import XMLProcessor
@@ -29,12 +29,12 @@ def process_mapping_files(source_data, destination_data, excel_data, source_file
         
         sourceTempXml = profile_component_generator(source_data, source_file_type)
         sourceXml = BoomiApiService.upload_component(sourceTempXml)
-        sourceComponentId = ComponentUtilsService.extract_component_id(sourceXml)
+        sourceComponentId = ComponentUtils.extract_component_id(sourceXml)
         logger.info(f"Extracted source component ID: {sourceComponentId}")
         
         destinationTempXml = profile_component_generator(destination_data, destination_file_type)
         destinationXml = BoomiApiService.upload_component(destinationTempXml)
-        destinationComponentId = ComponentUtilsService.extract_component_id(destinationXml)
+        destinationComponentId = ComponentUtils.extract_component_id(destinationXml)
         logger.info(f"Extracted destination component ID: {destinationComponentId}")
         
         mapTempComponentXml = MappingComponentXmlGenerator.generate_boomi_map(

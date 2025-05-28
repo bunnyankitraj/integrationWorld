@@ -3,7 +3,7 @@ from collections import OrderedDict
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from mappingUtility.strategy.ComponentGenerator import FileProcessor
-from mappingUtility.Utility import JsonCleaner
+from mappingUtility.Utility import JsonUtils
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 import logging
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class JSONProcessor(FileProcessor):
     def process(self, file_content):
         logger.info("Processing JSON file content.")
-        file_content = JsonCleaner.main(file_content)
+        file_content = JsonUtils.main(file_content)
         xml_output = JSONProcessor.generate_profile_xml(file_content)
         logger.info("XML output generated successfully.")
         # logger.info(xml_output)
