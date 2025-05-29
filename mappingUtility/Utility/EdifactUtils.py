@@ -61,7 +61,7 @@ def extract_segment_names_from_edifact(edifact_message):
     return {seg.split('+')[0].strip() for seg in segments if seg.strip()}
 
 
-def parse_segment_line(segment_line, segment_fields,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
+def parse_segment_line(segment_line, segment_fields,seg_sep, elem_sep, sub_elem_sep):
     
     parts = segment_line.split('+')
     segment_name = parts[0]
@@ -82,7 +82,7 @@ def parse_segment_line(segment_line, segment_fields,seg_sep="'", elem_sep="+", s
     return field_data
 
 
-def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
+def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep, elem_sep, sub_elem_sep):
     segment_structure = load_segment_structure_from_xml(xml_content)
 
     logger.info("Loaded segments from XML:")
@@ -108,7 +108,7 @@ def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep="
         segment_info = segment_structure[segment_name]
         segment_fields = segment_info['fields']
 
-        parsed_fields = parse_segment_line(segment_line, segment_fields)
+        parsed_fields = parse_segment_line(segment_line, segment_fields, seg_sep, elem_sep, sub_elem_sep)
 
         all_segments_data[segment_name].append(parsed_fields)
 
@@ -181,7 +181,7 @@ def fetch_edifact_xml(edifact_content):
     raise ValueError("Could not parse EDIFACT UNH segment for message type and version.")
 
 
-def get_edifact_fields(edifact_content,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
+def get_edifact_fields(edifact_content,seg_sep, elem_sep, sub_elem_sep):
     xml_content = fetch_edifact_xml(edifact_content)
     logger.debug(f"XML content fetched: {xml_content[:1000]}...")
     
