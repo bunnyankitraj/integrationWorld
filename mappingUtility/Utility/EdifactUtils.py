@@ -3,7 +3,7 @@ from collections import defaultdict
 import logging
 import os
 import re
-
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -148,38 +148,40 @@ def read_file_from_resources(file_path):
     with open(file_path, 'r') as file:
         return file.read()
  
+def load_edifact_mapping():
+    mapping_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        'resources', 'edifact', 'edifact_mapping.yaml'
+    )
+    with open(mapping_path, 'r') as f:
+        return yaml.safe_load(f)
+
 def fetch_edifact_xml(edifact_content):
     if isinstance(edifact_content, bytes):
         edifact_content = edifact_content.decode('utf-8')
-        
-    logger.info(f"Fetching XML resource for EDIFACT content: {edifact_content}")
-    
-    # Use regex to extract message type and version
-    match = re.search(r"UNH\+\d+\+([A-Z]+):([A-Z]):(\d+[A-Z])", edifact_content)
-    if match:
-        message_type = match.group(1)
-        version = match.group(3)
-        logger.info(f"Detected EDIFACT message: {message_type} version: {version}")
-        
-        if message_type == "ORDERS" and version == "96A":
-            logger.info("Using D96A_ORDERS XML resource")
-            resource_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                'resources', 'edifact', 'D96_ORDERS.xml'
-            )
-        elif message_type == "IFTMIN" and version == "00A":
-            logger.info("Using D00A_IFTMIN XML resource")
-            resource_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                'resources', 'edifact', 'D00A_IFTMIN.xml'
-            )
-        else:
-            raise ValueError(f"Unsupported EDIFACT message type or version: {message_type}:{version}")
-        
-        return read_file_from_resources(resource_path)
-    
-    raise ValueError("Could not parse EDIFACT UNH segment for message type and version.")
 
+    logger.info(f"Fetching XML resource for EDIFACT content: {edifact_content}")
+
+    match = re.search(r"UNH\+\d+\+([A-Z]+):([A-Z]):(\d+[A-Z])", edifact_content)
+    if not match:
+        raise ValueError("Could not parse EDIFACT UNH segment for message type and version.")
+
+    message_type = match.group(1)
+    version = match.group(3)
+
+    logger.info(f"Detected EDIFACT message: {message_type} version: {version}")
+
+    edifact_map = load_edifact_mapping()
+    try:
+        xml_filename = edifact_map[message_type][version]
+    except KeyError:
+        raise ValueError(f"Unsupported EDIFACT message type or version: {message_type}:{version}")
+
+    resource_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        'resources', 'edifact', xml_filename
+    )
+    return read_file_from_resources(resource_path)
 
 def get_edifact_fields(edifact_content,seg_sep, elem_sep, sub_elem_sep):
     xml_content = fetch_edifact_xml(edifact_content)
