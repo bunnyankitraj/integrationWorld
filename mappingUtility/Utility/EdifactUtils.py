@@ -61,7 +61,7 @@ def extract_segment_names_from_edifact(edifact_message):
     return {seg.split('+')[0].strip() for seg in segments if seg.strip()}
 
 
-def parse_segment_line(segment_line, segment_fields,seg_sep, elem_sep, sub_elem_sep):
+def parse_segment_line(segment_line, segment_fields,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
     
     parts = segment_line.split('+')
     segment_name = parts[0]
@@ -82,7 +82,7 @@ def parse_segment_line(segment_line, segment_fields,seg_sep, elem_sep, sub_elem_
     return field_data
 
 
-def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep, elem_sep, sub_elem_sep):
+def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
     segment_structure = load_segment_structure_from_xml(xml_content)
 
     logger.info("Loaded segments from XML:")
@@ -90,26 +90,25 @@ def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep, 
     if isinstance(edifact_message, bytes):
         edifact_message = edifact_message.decode('utf-8')
         
-    segments_lines = [seg.strip() for seg in edifact_message.strip().split(seg_sep) if seg.strip()]
+    segments_lines = [seg.strip() for seg in edifact_message.strip().split("'") if seg.strip()]
     logger.info("Segments found in EDIFACT message:")
 
-    all_segments_data = defaultdict(list) 
+    all_segments_data = defaultdict(list)  # key=segment_name, value=list of dicts of fields
 
     for segment_line in segments_lines:
         segment_line = segment_line.strip()
         if not segment_line:
             continue
 
-        segment_name = segment_line.split(elem_sep)[0].strip()
+        segment_name = segment_line.split('+')[0].strip()
         if segment_name not in segment_structure:
             logger.error(f"[SKIPPED] Segment '{segment_name}' not found in XML structure")
             continue
 
         segment_info = segment_structure[segment_name]
-        segment_path = segment_info['path']
         segment_fields = segment_info['fields']
 
-        parsed_fields = parse_segment_line(segment_line, segment_fields,seg_sep, elem_sep, sub_elem_sep)
+        parsed_fields = parse_segment_line(segment_line, segment_fields)
 
         all_segments_data[segment_name].append(parsed_fields)
 
@@ -184,13 +183,17 @@ def fetch_edifact_xml(edifact_content):
 
 def get_edifact_fields(edifact_content,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
     xml_content = fetch_edifact_xml(edifact_content)
+    logger.debug(f"XML content fetched: {xml_content[:1000]}...")
     
     logger.info("Parsing EDIFACT message and matching fields")
     segment_structure = load_segment_structure_from_xml(xml_content)
+    logger.debug(f"Segment structure loaded: {segment_structure}")
     paths_with_values = generate_all_fields_for_used_segments(xml_content, edifact_content,seg_sep, elem_sep, sub_elem_sep)
+    logger.debug(f"Paths with values: {paths_with_values}")
 
     logger.info("Flattened field path list (CSV format):")
     flat_list = get_flat_field_path_list(paths_with_values, segment_structure, edifact_content)
+    logger.debug(f"Flat field path list: {flat_list}")
     return flat_list
 
 if __name__ == "__main__":
