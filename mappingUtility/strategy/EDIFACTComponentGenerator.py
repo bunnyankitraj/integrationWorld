@@ -15,7 +15,7 @@ class EDIFACTProcessor(FileProcessor):
         return EDIFACTProcessor.getD96_order_xml()
     
     def getD96_order_xml():
-        resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'D96_ORDERS.xml')
+        resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'edifact', 'D96_ORDERS.xml')
         xml_response =  EDIFACTProcessor.read_file_from_resources(resource_path)
         return EDIFACTProcessor.update_values_from_xml(xml_response)
     

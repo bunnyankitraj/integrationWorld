@@ -78,9 +78,7 @@ def extract_xml_paths(element, parent_path="", seen_paths=None):
     return paths
 
 def extract_edifact_fields(edifact_content, seg_sep="'", elem_sep="+", sub_elem_sep=":"):
-    resource_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'resources', 'D96_ORDERS.xml')
-    xml_content = read_file_from_resources(resource_path)
-    return EdifactUtils.get_edifact_fields(xml_content, edifact_content)
+    return EdifactUtils.get_edifact_fields(edifact_content,seg_sep="'", elem_sep="+", sub_elem_sep=":")
 
 def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     fields = []

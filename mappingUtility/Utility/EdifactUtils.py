@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 import logging
+import os
+import re
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,60 +61,46 @@ def extract_segment_names_from_edifact(edifact_message):
     return {seg.split('+')[0].strip() for seg in segments if seg.strip()}
 
 
-def parse_segment_line(segment_line, segment_fields):
-    """
-    segment_line: raw EDIFACT segment line, e.g. "BGM+220::6365+12345+9"
-    segment_fields: list of field names from XML for this segment, e.g.
-      ['BGM01', 'BGM01.1', 'BGM01.2', 'BGM01.3', 'BGM02', 'BGM03']
-
-    Returns dict of field_name -> value (only if field_name in segment_fields)
-    """
+def parse_segment_line(segment_line, segment_fields,seg_sep, elem_sep, sub_elem_sep):
+    
     parts = segment_line.split('+')
     segment_name = parts[0]
 
     field_data = {}
-    # elements start from BGM01 -> parts[1] is BGM01, parts[2] is BGM02, etc.
     for idx, element_value in enumerate(parts[1:], start=1):
         field_base = f"{segment_name}{idx:02d}"  # e.g. BGM01, BGM02
-        # Check if element_value has subcomponents
-        subcomponents = element_value.split(':')
+        subcomponents = element_value.split(sub_elem_sep)
         if len(subcomponents) > 1:
-            # Multiple subcomponents
             for sub_idx, sub_val in enumerate(subcomponents, start=1):
                 field_name = f"{field_base}.{sub_idx}"  # e.g. BGM01.1, BGM01.2
                 if field_name in segment_fields:
                     field_data[field_name] = sub_val
         else:
-            # Single component
             if field_base in segment_fields:
                 field_data[field_base] = element_value
 
     return field_data
 
 
-def generate_all_fields_for_used_segments(xml_content, edifact_message):
+def generate_all_fields_for_used_segments(xml_content, edifact_message,seg_sep, elem_sep, sub_elem_sep):
     segment_structure = load_segment_structure_from_xml(xml_content)
 
     logger.info("Loaded segments from XML:")
-    # for s, v in segment_structure.items():
-    #     logger.info(f"  {s}: {v['path']} ({len(v['fields'])} fields)")
 
     if isinstance(edifact_message, bytes):
         edifact_message = edifact_message.decode('utf-8')
         
-    segments_lines = [seg.strip() for seg in edifact_message.strip().split("'") if seg.strip()]
+    segments_lines = [seg.strip() for seg in edifact_message.strip().split(seg_sep) if seg.strip()]
     logger.info("Segments found in EDIFACT message:")
-    # for s in segments_lines:
-    #     logger.info(f"  {s}")
 
-    all_segments_data = defaultdict(list)  # key=segment_name, value=list of dicts of fields
+    all_segments_data = defaultdict(list) 
 
     for segment_line in segments_lines:
         segment_line = segment_line.strip()
         if not segment_line:
             continue
 
-        segment_name = segment_line.split('+')[0].strip()
+        segment_name = segment_line.split(elem_sep)[0].strip()
         if segment_name not in segment_structure:
             logger.error(f"[SKIPPED] Segment '{segment_name}' not found in XML structure")
             continue
@@ -120,14 +109,9 @@ def generate_all_fields_for_used_segments(xml_content, edifact_message):
         segment_path = segment_info['path']
         segment_fields = segment_info['fields']
 
-        parsed_fields = parse_segment_line(segment_line, segment_fields)
+        parsed_fields = parse_segment_line(segment_line, segment_fields,seg_sep, elem_sep, sub_elem_sep)
 
-        # Store parsed fields dict for this occurrence
         all_segments_data[segment_name].append(parsed_fields)
-
-        # for field_name, value in parsed_fields.items():
-        #     full_path = f"{segment_path}/{field_name}"
-        #     logger.info(f"[OK] {full_path} = {value}")
 
     return all_segments_data
 
@@ -135,9 +119,6 @@ def info_fields_with_full_path(paths_with_values, segment_structure):
     for segment_name, occurrences in paths_with_values.items():
         segment_path = segment_structure[segment_name]['path']
         for i, occurrence in enumerate(occurrences, 1):
-            # logger.info a blank line between occurrences except the first
-            # if i > 1:
-            #     logger.info()
             for field_name, value in occurrence.items():
                 full_path = f"{segment_path}/{field_name}"
                 logger.info(f"{full_path} = {value}")
@@ -164,14 +145,49 @@ def get_flat_field_path_list(paths_with_values, segment_structure, edifact_messa
     return flat_list
 
 
-def get_edifact_fields(xml_content, edifact_content):
+def read_file_from_resources(file_path):
+    with open(file_path, 'r') as file:
+        return file.read()
+ 
+def fetch_edifact_xml(edifact_content):
+    if isinstance(edifact_content, bytes):
+        edifact_content = edifact_content.decode('utf-8')
+        
+    logger.info(f"Fetching XML resource for EDIFACT content: {edifact_content}")
+    
+    # Use regex to extract message type and version
+    match = re.search(r"UNH\+\d+\+([A-Z]+):([A-Z]):(\d+[A-Z])", edifact_content)
+    if match:
+        message_type = match.group(1)
+        version = match.group(3)
+        logger.info(f"Detected EDIFACT message: {message_type} version: {version}")
+        
+        if message_type == "ORDERS" and version == "96A":
+            logger.info("Using D96A_ORDERS XML resource")
+            resource_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'resources', 'edifact', 'D96_ORDERS.xml'
+            )
+        elif message_type == "IFTMIN" and version == "00A":
+            logger.info("Using D00A_IFTMIN XML resource")
+            resource_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'resources', 'edifact', 'D00A_IFTMIN.xml'
+            )
+        else:
+            raise ValueError(f"Unsupported EDIFACT message type or version: {message_type}:{version}")
+        
+        return read_file_from_resources(resource_path)
+    
+    raise ValueError("Could not parse EDIFACT UNH segment for message type and version.")
 
-    logger.info("Parsing EDIFACT message and matching fields:")
+
+def get_edifact_fields(edifact_content,seg_sep="'", elem_sep="+", sub_elem_sep=":"):
+    xml_content = fetch_edifact_xml(edifact_content)
+    
+    logger.info("Parsing EDIFACT message and matching fields")
     segment_structure = load_segment_structure_from_xml(xml_content)
-    paths_with_values = generate_all_fields_for_used_segments(xml_content, edifact_content)
-
-    logger.info("Final field paths with values:")
-    # info_fields_with_full_path(paths_with_values, segment_structure)
+    paths_with_values = generate_all_fields_for_used_segments(xml_content, edifact_content,seg_sep, elem_sep, sub_elem_sep)
 
     logger.info("Flattened field path list (CSV format):")
     flat_list = get_flat_field_path_list(paths_with_values, segment_structure, edifact_content)
