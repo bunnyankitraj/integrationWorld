@@ -14,6 +14,11 @@ class RequestIDMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        _request_data.request_id = str(uuid.uuid4())
+        response = self.get_response(request)
+        return response
+    
+    # def __call__(self, request):
         # Assign a unique request ID
         request_id = str(uuid.uuid4())
         _request_data.request_id = request_id

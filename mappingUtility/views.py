@@ -4,7 +4,7 @@ from django.http import JsonResponse
 import traceback
 from mappingUtility.Utility import ComponentUtils,LogUtils
 from mappingUtility.client import BoomiApiService
-from mappingUtility.service import ExcelMappingGenerator, MappingService,FileTypeChecker
+from mappingUtility.service import ExcelMappingGenerator, MappingService, FileTypeChecker, ExcelMappingSourceTargetGenerator, MapGeneratorService
 
 import logging
 
@@ -127,4 +127,78 @@ def mapping_excel_generator(request):
             'error': str(e),
             'traceback': tb,
             'function': 'mapping_excel_generator'
+        }, status=500)
+
+@api_view(['POST'])
+def mapping_excel_source_target_generator(request):
+    logger.info("Request received for mapping_excel_generator")
+    LogUtils.log_api_request(logger, request, "mapping_excel_generator")
+    try:
+        source_type = request.POST.get('source_type')
+        destination_type = request.POST.get('destination_type')
+        source_file = request.FILES.get('source')
+        destination_file = request.FILES.get('destination')
+
+        if not all([source_type, destination_type, source_file, destination_file]):
+            return JsonResponse({'error': 'Missing one or more required fields or files'}, status=400)
+
+        source_data = source_file.read()
+        target_data = destination_file.read()
+        source_type = source_type.upper()
+        destination_type = destination_type.upper()
+
+        processed_result = ExcelMappingSourceTargetGenerator.generate_excel_file_with_source_target(source_type, source_data, destination_type, target_data)
+        return processed_result
+
+    except Exception as e:
+        tb = traceback.format_exc()
+        return JsonResponse({
+            'error': str(e),
+            'traceback': tb,
+            'function': 'mapping_excel_generator'
+        }, status=500)
+
+@api_view(['POST'])
+def map_xml_component_generator_using_excel(request):
+    LogUtils.log_api_request(logger, request, "map_xml_component_generator")
+    try:
+        logger.info("Request received for map_xml_component_generator")
+        # source_file = request.FILES.get('source')
+        # destination_file = request.FILES.get('destination')
+        excel_file = request.FILES.get('excel')
+
+        # if not all([source_file, destination_file, excel_file]):
+        #     return JsonResponse({'error': 'Missing one or more files'}, status=400)
+
+        # source_file_type = FileTypeChecker.get_file_type(source_file)
+        # logger.info(f"Source file type detected: {source_file_type}")
+        
+        # destination_file_type = FileTypeChecker.get_file_type(destination_file)
+        # logger.info(f"Destination file type detected: {destination_file_type}")
+        
+        # source_data = source_file.read()
+        # destination_data = destination_file.read()
+        excel_data = excel_file.read()
+        
+        logger.info('Processing files...')
+        processed_result = MapGeneratorService.generate_component_xml_with_excel( excel_data)
+
+        logger.info('Files processed')
+        componenetId = ComponentUtils.extract_component_id(processed_result)
+
+        # Return the processed result and componentId
+        return JsonResponse({
+            'status': "success",
+            'message': 'Files processed successfully',
+            'redirectUrl': 'https://platform.boomi.com/AtomSphere.html#build;accountId=dpwsubaccount1-FZOWUA;branchName=main;components='+componenetId, 
+            'componentId': componenetId,
+            # 'response': processed_result
+        })
+
+    except Exception as e:
+        tb = traceback.format_exc()
+        return JsonResponse({
+            'error': str(e),
+            'traceback': tb,
+            'function': 'map_xml_component_generator'
         }, status=500)
