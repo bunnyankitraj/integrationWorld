@@ -77,8 +77,8 @@ def extract_xml_paths(element, parent_path="", seen_paths=None):
     
     return paths
 
-def extract_edifact_fields(edifact_content, seg_sep="'", elem_sep="+", sub_elem_sep=":"):
-    return EdifactUtils.get_edifact_fields(edifact_content,seg_sep="'", elem_sep="+", sub_elem_sep=":")
+def extract_edifact_fields(edifact_content, seg_sep, elem_sep, sub_elem_sep):
+    return EdifactUtils.get_edifact_fields(edifact_content,seg_sep, elem_sep, sub_elem_sep)
 
 def extract_x12_fields(content, seg_sep="~", elem_sep="*", sub_elem_sep=":"):
     fields = []
@@ -133,7 +133,7 @@ def read_content(content, file_type, seg_sep="~", elem_sep="*", sub_elem_sep=":"
         except ET.ParseError as e:
             raise ValueError(f"Invalid XML: {e}")
     elif file_type == "EDIFACT":
-        return extract_edifact_fields(content, seg_sep="'", elem_sep="+", sub_elem_sep=":")
+        return extract_edifact_fields(content, seg_sep, elem_sep, sub_elem_sep)
     elif file_type == "X12":
         return extract_x12_fields(content, seg_sep, elem_sep, sub_elem_sep)
     else:
