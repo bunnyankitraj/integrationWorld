@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bns:Component xmlns:bns="http://api.platform.boomi.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" branchId="Qjo2OTgxOA" branchName="main" currentVersion="true" deleted="false" folderFullPath="DPW Sub Account 1/ZZZ_Users/Mapping Automation" folderId="Rjo3NjU3NTEy" folderName="Mapping Automation" name="D96_ORDERS" type="profile.edi" version="1">
+<bns:Component xmlns:bns="http://api.platform.boomi.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" branchId="Qjo2OTgxOA" branchName="main" currentVersion="true" deleted="false" folderFullPath="DPW Sub Account 1/ZZZ_Users/Mapping Automation" folderId="Rjo3Njg1OTkw" folderName="Mapping Automation" name="D96_ORDERS" type="profile.edi" version="1">
     <bns:encryptedValues/>
     <bns:description/>
     <bns:object>

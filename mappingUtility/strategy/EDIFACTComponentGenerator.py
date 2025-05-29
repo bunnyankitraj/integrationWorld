@@ -5,7 +5,9 @@ from mappingUtility.strategy.ComponentGenerator import FileProcessor
 from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
 import os
 
+
 logger = logging.getLogger(__name__)
+
 
 class EDIFACTProcessor(FileProcessor):
     def process(self, file_content):
