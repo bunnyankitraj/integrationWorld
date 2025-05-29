@@ -11,8 +11,3 @@ auth_token = "cHJhdGlrLmFyb3JhQGV4dC5kcHdvcmxkLmNvbTpJbmZ5QDk4NzY1"
 
 GEN_AI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
 GEN_AI_API_KEY = "AIzaSyCOKPBzAeqOocXuiiH44NGBIGLX-IrnlrY"
-
-# Default EDIFACT separators
-SEGMENT_SEPARATOR = "'"
-ELEMENT_SEPARATOR = "+"
-SUBELEMENT_SEPARATOR = ":"

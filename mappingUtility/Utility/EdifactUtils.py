@@ -4,6 +4,8 @@ import logging
 import os
 import re
 import yaml
+from resources.globlas import folder_id, folder_path, branch_id, branch_name, boomi_component_bns_url, boomi_component_xsi_url
+
 
 logger = logging.getLogger(__name__)
 
@@ -181,7 +183,32 @@ def fetch_edifact_xml(edifact_content):
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
         'resources', 'edifact', xml_filename
     )
-    return read_file_from_resources(resource_path)
+    xml_component =  read_file_from_resources(resource_path)
+    update_xml_componentd = update_xml_component(xml_component)
+    return update_xml_componentd
+
+
+def update_xml_component(xml_content):
+    if isinstance(xml_content, str):
+        xml_content = ET.ElementTree(ET.fromstring(xml_content))
+    root = xml_content.getroot()
+
+    for elem in root.iter():
+        if 'folderId' in elem.attrib:
+            elem.set('folderId', folder_id)
+        if 'folderPath' in elem.attrib:
+            elem.set('folderPath', folder_path)
+        if 'branchId' in elem.attrib:
+            elem.set('branchId', branch_id)
+        if 'branchName' in elem.attrib:
+            elem.set('branchName', branch_name)
+        if 'boomiComponentBnsUrl' in elem.attrib:
+            elem.set('boomiComponentBnsUrl', boomi_component_bns_url)
+        if 'boomiComponentXsiUrl' in elem.attrib:
+            elem.set('boomiComponentXsiUrl', boomi_component_xsi_url)
+            
+    return ET.tostring(root, encoding='unicode')
+
 
 def get_edifact_fields(edifact_content,seg_sep, elem_sep, sub_elem_sep):
     xml_content = fetch_edifact_xml(edifact_content)
