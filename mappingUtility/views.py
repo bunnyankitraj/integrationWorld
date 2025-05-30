@@ -20,7 +20,7 @@ def sample_api(request):
     return JsonResponse({'message': 'Success'})
 
 @api_view(['POST'])
-def map_xml_component_generator(request):
+def generate_map_xml(request):
     LogUtils.log_api_request(logger, request, "map_xml_component_generator")
     try:
         logger.info("Request received for map_xml_component_generator")
@@ -66,11 +66,11 @@ def map_xml_component_generator(request):
 
 
 def index(request):
-    return HttpResponse("Hello World")
+    return HttpResponse("I am up")
 
 
 @api_view(['POST'])
-def profile_xml_generator(request):
+def generate_profile_xml(request):
     LogUtils.log_api_request(logger, request, "profile_xml_generator")
     try:
         file_type = request.POST.get('type')
@@ -101,7 +101,7 @@ def profile_xml_generator(request):
 
 
 @api_view(['POST'])
-def mapping_excel_generator(request):
+def generate_mapping_excel(request):
     logger.info("Request received for mapping_excel_generator")
     LogUtils.log_api_request(logger, request, "mapping_excel_generator")
     try:
@@ -130,7 +130,7 @@ def mapping_excel_generator(request):
         }, status=500)
 
 @api_view(['POST'])
-def mapping_excel_source_target_generator(request):
+def generate_mapping_excel_with_sources(request):
     logger.info("Request received for mapping_excel_generator")
     LogUtils.log_api_request(logger, request, "mapping_excel_generator")
     try:
@@ -159,7 +159,7 @@ def mapping_excel_source_target_generator(request):
         }, status=500)
 
 @api_view(['POST'])
-def map_xml_component_generator_using_excel(request):
+def generate_map_xml_from_excel(request):
     LogUtils.log_api_request(logger, request, "map_xml_component_generator")
     try:
         logger.info("Request received for map_xml_component_generator")

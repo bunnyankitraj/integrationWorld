@@ -162,7 +162,7 @@ def fetch_edifact_xml(edifact_content):
     if isinstance(edifact_content, bytes):
         edifact_content = edifact_content.decode('utf-8')
 
-    logger.info(f"Fetching XML resource for EDIFACT content: {edifact_content}")
+    logger.debug(f"Fetching XML resource for EDIFACT content: {edifact_content}")
 
     match = re.search(r"UNH\+\d+\+([A-Z]+):([A-Z]):(\d+[A-Z])", edifact_content)
     if not match:

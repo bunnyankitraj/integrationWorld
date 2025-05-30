@@ -2,10 +2,21 @@ from django.urls import path
 from . import views
 
 urlpatterns=[
-    path('',views.index),
-    path('requirment/profile-xml-generator', views.profile_xml_generator),
-    path('requirment/map-xml-component-generator', views.map_xml_component_generator_using_excel),
-    path('requirment/mapping-excel-generator', views.mapping_excel_source_target_generator),
-    path('test/sample-api', views.sample_api),
+    
+    path('', views.index),
+
+    # Profile XML Generator
+    path('api/generate/profile-xml', views.generate_profile_xml),
+
+    # Mapping Excel Generator
+    path('api/generate/mapping-excel', views.generate_mapping_excel),
+    path('api/generate/mapping-excel-with-source-target', views.generate_mapping_excel_with_sources),
+
+    # Map XML Component Generator
+    path('api/generate/map-xml', views.generate_map_xml),
+    path('api/generate/map-xml-from-excel', views.generate_map_xml_from_excel),
+
+    # Test API
+    path('test/sample', views.sample_api)
 
 ]

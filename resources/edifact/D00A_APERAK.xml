@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?><Component xmlns:bns="http://api.platform.boomi.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" branchId="Qjo2OTgxOA" branchName="main" componentId="23550e45-13d4-4107-ab7a-ac0a0e1210d0" createdBy="ankit.raj@dpworld.com" createdDate="2025-05-30T10:42:22Z" currentVersion="true" deleted="false" folderFullPath="DPW Sub Account 1/ZZZ_Users/Mapping Automation" folderId="Rjo3Njg1OTkw" folderName="Mapping Automation" modifiedBy="ankit.raj@dpworld.com" modifiedDate="2025-05-30T10:42:22Z" name="DOOA_APA" type="profile.edi" version="1">
+    <bns:encryptedValues/>
+    <bns:description/>
+    <bns:object>
+      <EdiProfile strict="true">
+        <ProfileProperties>
+          <EdiGeneralInfo conditionalValidationEnabled="true" standard="edifact"/>
+          <EdiFileOptions fileType="delimited">
+            <EdiDelimitedOptions fileDelimiter="plusdelimited" repeatDelimiter="tildedelimited" segmentchar="singlequote"/>
+            <EdiDataOptions/>
+          </EdiFileOptions>
+          <EdiOptions>
+            <EdiEdifactOptions controlAgency="UN" messageType="APERAK" release="00A" version="D"/>
+          </EdiOptions>
+        </ProfileProperties>
+        <DataElements>
+          <EdiLoop isContainer="true" isNode="true" key="1" loopId="1" loopRepeat="1" loopingOption="unique" name="Header">
+            <EdiSegment isNode="true" key="4" mandatory="true" maxUse="1" name="UNH" position="0010" repeatAction="na" segmentName="Message Header">
+              <EdiDataElement comments="Unique message reference assigned by the sender." dataType="AN" elementPurpose="Message Reference number" isMappable="true" isNode="true" key="5" mandatory="true" maxLength="14" minLength="1" name="UNH01" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Message type" composite="start" dataType="AN" elementPurpose="Message type" isMappable="true" isNode="true" key="6" mandatory="true" maxLength="6" minLength="1" name="UNH02.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Message version number" composite="comp" dataType="AN" elementPurpose="Message version number" isMappable="true" isNode="true" key="7" mandatory="true" maxLength="3" minLength="1" name="UNH02.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Message release number" composite="comp" dataType="AN" elementPurpose="Message release number" isMappable="true" isNode="true" key="8" mandatory="true" maxLength="3" minLength="1" name="UNH02.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Controlling agency" composite="comp" dataType="AN" elementPurpose="Controlling agency" isMappable="true" isNode="true" key="9" mandatory="true" maxLength="2" minLength="1" name="UNH02.4" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Association assigned code" composite="comp" dataType="AN" elementPurpose="Association assigned code" isMappable="true" isNode="true" key="10" mandatory="false" maxLength="6" minLength="1" name="UNH02.5" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Common access reference" dataType="AN" elementPurpose="Common access reference" isMappable="true" isNode="true" key="11" mandatory="false" maxLength="35" minLength="1" name="UNH03" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Sequence of transfers" composite="start" dataType="N" elementPurpose="Sequence of transfers" isMappable="true" isNode="true" key="12" mandatory="false" maxLength="2" minLength="1" name="UNH04.1" validateData="true">
+                <DataFormat>
+                  <ProfileNumberFormat impliedDecimal="0" signedField="false"/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="First and last transfer" composite="comp" dataType="AN" elementPurpose="First and last transfer" isMappable="true" isNode="true" key="13" mandatory="false" maxLength="1" minLength="1" name="UNH04.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+            </EdiSegment>
+            <EdiSegment isNode="true" key="14" mandatory="true" maxUse="1" name="BGM" position="0020" repeatAction="na" segmentName="BEGINNING OF MESSAGE">
+              <EdiDataElement comments="Code specifying the document name." composite="start" dataType="AN" elementPurpose="Document name code" isMappable="true" isNode="true" key="15" mandatory="false" maxLength="3" minLength="1" name="BGM01.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="1001"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="16" mandatory="false" maxLength="3" minLength="1" name="BGM01.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="1131"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="17" mandatory="false" maxLength="3" minLength="1" name="BGM01.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="3055"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Name of a document." composite="comp" dataType="AN" elementPurpose="Document name" isMappable="true" isNode="true" key="18" mandatory="false" maxLength="35" minLength="1" name="BGM01.4" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="To identify a document." composite="start" dataType="AN" elementPurpose="Document identifier" isMappable="true" isNode="true" key="19" mandatory="false" maxLength="35" minLength="1" name="BGM02.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="To identify a version." composite="comp" dataType="AN" elementPurpose="Version identifier" isMappable="true" isNode="true" key="20" mandatory="false" maxLength="9" minLength="1" name="BGM02.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="To identify a revision." composite="comp" dataType="AN" elementPurpose="Revision identifier" isMappable="true" isNode="true" key="21" mandatory="false" maxLength="6" minLength="1" name="BGM02.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Code indicating the function of the message." dataType="AN" elementPurpose="Message function code" isMappable="true" isNode="true" key="22" mandatory="false" maxLength="3" minLength="1" name="BGM03" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="1225"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the type of acknowledgment required or transmitted." dataType="AN" elementPurpose="Response type code" isMappable="true" isNode="true" key="23" mandatory="false" maxLength="3" minLength="1" name="BGM04" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="4343"/>
+              </EdiDataElement>
+            </EdiSegment>
+            <EdiSegment isNode="true" key="24" mandatory="false" maxUse="9" name="DTM" position="0030" repeatAction="na" segmentName="DATE/TIME/PERIOD">
+              <EdiDataElement comments="Code qualifying the function of a date, time or period." composite="start" dataType="AN" elementPurpose="Date or time or period function code qualifier" isMappable="true" isNode="true" key="25" mandatory="true" maxLength="3" minLength="1" name="DTM01.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="2005"/>
+              </EdiDataElement>
+              <EdiDataElement comments="The value of a date, a date and time, a time or of a period in a specified representation." composite="comp" dataType="AN" elementPurpose="Date or time or period value" isMappable="true" isNode="true" key="26" mandatory="false" maxLength="35" minLength="1" name="DTM01.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the representation of a date, time or period." composite="comp" dataType="AN" elementPurpose="Date or time or period format code" isMappable="true" isNode="true" key="27" mandatory="false" maxLength="3" minLength="1" name="DTM01.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="2379"/>
+              </EdiDataElement>
+            </EdiSegment>
+            <EdiSegment isNode="true" key="28" mandatory="false" maxUse="9" name="FTX" position="0040" repeatAction="na" segmentName="FREE TEXT">
+              <EdiDataElement comments="Code qualifying the subject of the text." dataType="AN" elementPurpose="Text subject code qualifier" isMappable="true" isNode="true" key="29" mandatory="true" maxLength="3" minLength="1" name="FTX01" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="4451"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the function of free text." dataType="AN" elementPurpose="Free text function code" isMappable="true" isNode="true" key="30" mandatory="false" maxLength="3" minLength="1" name="FTX02" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="4453"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying free form text." composite="start" dataType="AN" elementPurpose="Free text value code" isMappable="true" isNode="true" key="31" mandatory="true" maxLength="17" minLength="1" name="FTX03.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="32" mandatory="false" maxLength="3" minLength="1" name="FTX03.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="1131"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="33" mandatory="false" maxLength="3" minLength="1" name="FTX03.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="3055"/>
+              </EdiDataElement>
+              <EdiDataElement comments="Free form text." composite="start" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="34" mandatory="true" maxLength="512" minLength="1" name="FTX04.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="35" mandatory="false" maxLength="512" minLength="1" name="FTX04.2" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="36" mandatory="false" maxLength="512" minLength="1" name="FTX04.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="37" mandatory="false" maxLength="512" minLength="1" name="FTX04.4" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="38" mandatory="false" maxLength="512" minLength="1" name="FTX04.5" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the language name." dataType="AN" elementPurpose="Language name code" isMappable="true" isNode="true" key="39" mandatory="false" maxLength="3" minLength="1" name="FTX05" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the format of free text." dataType="AN" elementPurpose="Free text format code" isMappable="true" isNode="true" key="40" mandatory="false" maxLength="3" minLength="1" name="FTX06" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="4447"/>
+              </EdiDataElement>
+            </EdiSegment>
+            <EdiSegment isNode="true" key="41" mandatory="false" maxUse="9" name="CNT" position="0050" repeatAction="na" segmentName="CONTROL TOTAL">
+              <EdiDataElement comments="Code qualifying the type of control of hash total." composite="start" dataType="AN" elementPurpose="Control total type code qualifier" isMappable="true" isNode="true" key="42" mandatory="true" maxLength="3" minLength="1" name="CNT01.1" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+                <QualifierList codeList="6069"/>
+              </EdiDataElement>
+              <EdiDataElement comments="To specify the value of a control quantity." composite="comp" dataType="N" elementPurpose="Control total value" isMappable="true" isNode="true" key="43" mandatory="true" maxLength="18" minLength="1" name="CNT01.2" validateData="true">
+                <DataFormat>
+                  <ProfileNumberFormat impliedDecimal="0" signedField="false"/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Code specifying the unit of measurement." composite="comp" dataType="AN" elementPurpose="Measurement unit code" isMappable="true" isNode="true" key="44" mandatory="false" maxLength="3" minLength="1" name="CNT01.3" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+            </EdiSegment>
+            <EdiLoop isNode="true" key="45" loopId="DOC" loopRepeat="99" loopingOption="unique" name="DOC">
+              <EdiSegment isNode="true" key="46" mandatory="true" maxUse="1" name="DOC" position="0070" repeatAction="na" segmentName="DOCUMENT/MESSAGE DETAILS">
+                <EdiDataElement comments="Code specifying the document name." composite="start" dataType="AN" elementPurpose="Document name code" isMappable="true" isNode="true" key="47" mandatory="false" maxLength="3" minLength="1" name="DOC01.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1001"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="48" mandatory="false" maxLength="3" minLength="1" name="DOC01.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1131"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="49" mandatory="false" maxLength="3" minLength="1" name="DOC01.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3055"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a document." composite="comp" dataType="AN" elementPurpose="Document name" isMappable="true" isNode="true" key="50" mandatory="false" maxLength="35" minLength="1" name="DOC01.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a document." composite="start" dataType="AN" elementPurpose="Document identifier" isMappable="true" isNode="true" key="51" mandatory="false" maxLength="35" minLength="1" name="DOC02.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the status of a document." composite="comp" dataType="AN" elementPurpose="Document status code" isMappable="true" isNode="true" key="52" mandatory="false" maxLength="3" minLength="1" name="DOC02.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1373"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form description of the source of a document." composite="comp" dataType="AN" elementPurpose="Document source description" isMappable="true" isNode="true" key="53" mandatory="false" maxLength="70" minLength="1" name="DOC02.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the language name." composite="comp" dataType="AN" elementPurpose="Language name code" isMappable="true" isNode="true" key="54" mandatory="false" maxLength="3" minLength="1" name="DOC02.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a version." composite="comp" dataType="AN" elementPurpose="Version identifier" isMappable="true" isNode="true" key="55" mandatory="false" maxLength="9" minLength="1" name="DOC02.5" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a revision." composite="comp" dataType="AN" elementPurpose="Revision identifier" isMappable="true" isNode="true" key="56" mandatory="false" maxLength="6" minLength="1" name="DOC02.6" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the type of communication medium." dataType="AN" elementPurpose="Communication medium type code" isMappable="true" isNode="true" key="57" mandatory="false" maxLength="3" minLength="1" name="DOC03" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3153"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Quantity of document copies required." dataType="N" elementPurpose="Document copies required quantity" isMappable="true" isNode="true" key="58" mandatory="false" maxLength="2" minLength="1" name="DOC04" validateData="true">
+                  <DataFormat>
+                    <ProfileNumberFormat impliedDecimal="0" signedField="false"/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Quantity of document originals required." dataType="N" elementPurpose="Document originals required quantity" isMappable="true" isNode="true" key="59" mandatory="false" maxLength="2" minLength="1" name="DOC05" validateData="true">
+                  <DataFormat>
+                    <ProfileNumberFormat impliedDecimal="0" signedField="false"/>
+                  </DataFormat>
+                </EdiDataElement>
+              </EdiSegment>
+              <EdiSegment isNode="true" key="60" mandatory="false" maxUse="99" name="DTM" position="0080" repeatAction="na" segmentName="DATE/TIME/PERIOD">
+                <EdiDataElement comments="Code qualifying the function of a date, time or period." composite="start" dataType="AN" elementPurpose="Date or time or period function code qualifier" isMappable="true" isNode="true" key="61" mandatory="true" maxLength="3" minLength="1" name="DTM01.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="2005"/>
+                </EdiDataElement>
+                <EdiDataElement comments="The value of a date, a date and time, a time or of a period in a specified representation." composite="comp" dataType="AN" elementPurpose="Date or time or period value" isMappable="true" isNode="true" key="62" mandatory="false" maxLength="35" minLength="1" name="DTM01.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the representation of a date, time or period." composite="comp" dataType="AN" elementPurpose="Date or time or period format code" isMappable="true" isNode="true" key="63" mandatory="false" maxLength="3" minLength="1" name="DTM01.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="2379"/>
+                </EdiDataElement>
+              </EdiSegment>
+            </EdiLoop>
+            <EdiLoop isNode="true" key="64" loopId="RFF" loopRepeat="9" loopingOption="unique" name="RFF">
+              <EdiSegment isNode="true" key="65" mandatory="true" maxUse="1" name="RFF" position="0100" repeatAction="na" segmentName="REFERENCE">
+                <EdiDataElement comments="Code qualifying a reference." composite="start" dataType="AN" elementPurpose="Reference function code qualifier" isMappable="true" isNode="true" key="66" mandatory="true" maxLength="3" minLength="1" name="RFF01.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1153"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Identifies a reference." composite="comp" dataType="AN" elementPurpose="Reference identifier" isMappable="true" isNode="true" key="67" mandatory="false" maxLength="35" minLength="1" name="RFF01.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a line of a document." composite="comp" dataType="AN" elementPurpose="Document line identifier" isMappable="true" isNode="true" key="68" mandatory="false" maxLength="6" minLength="1" name="RFF01.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify the version of a reference." composite="comp" dataType="AN" elementPurpose="Reference version identifier" isMappable="true" isNode="true" key="69" mandatory="false" maxLength="35" minLength="1" name="RFF01.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a revision." composite="comp" dataType="AN" elementPurpose="Revision identifier" isMappable="true" isNode="true" key="70" mandatory="false" maxLength="6" minLength="1" name="RFF01.5" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+              </EdiSegment>
+              <EdiSegment isNode="true" key="71" mandatory="false" maxUse="9" name="DTM" position="0110" repeatAction="na" segmentName="DATE/TIME/PERIOD">
+                <EdiDataElement comments="Code qualifying the function of a date, time or period." composite="start" dataType="AN" elementPurpose="Date or time or period function code qualifier" isMappable="true" isNode="true" key="72" mandatory="true" maxLength="3" minLength="1" name="DTM01.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="2005"/>
+                </EdiDataElement>
+                <EdiDataElement comments="The value of a date, a date and time, a time or of a period in a specified representation." composite="comp" dataType="AN" elementPurpose="Date or time or period value" isMappable="true" isNode="true" key="73" mandatory="false" maxLength="35" minLength="1" name="DTM01.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the representation of a date, time or period." composite="comp" dataType="AN" elementPurpose="Date or time or period format code" isMappable="true" isNode="true" key="74" mandatory="false" maxLength="3" minLength="1" name="DTM01.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="2379"/>
+                </EdiDataElement>
+              </EdiSegment>
+            </EdiLoop>
+            <EdiLoop isNode="true" key="75" loopId="NAD" loopRepeat="9" loopingOption="unique" name="NAD">
+              <EdiSegment isNode="true" key="76" mandatory="true" maxUse="1" name="NAD" position="0130" repeatAction="na" segmentName="NAME AND ADDRESS">
+                <EdiDataElement comments="Code giving specific meaning to a party." dataType="AN" elementPurpose="Party function code qualifier" isMappable="true" isNode="true" key="77" mandatory="true" maxLength="3" minLength="1" name="NAD01" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3035"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the identity of a party." composite="start" dataType="AN" elementPurpose="Party identifier" isMappable="true" isNode="true" key="78" mandatory="true" maxLength="35" minLength="1" name="NAD02.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="79" mandatory="false" maxLength="3" minLength="1" name="NAD02.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1131"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="80" mandatory="false" maxLength="3" minLength="1" name="NAD02.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3055"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form description of a name and address line." composite="start" dataType="AN" elementPurpose="Name and address description" isMappable="true" isNode="true" key="81" mandatory="true" maxLength="35" minLength="1" name="NAD03.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form description of a name and address line." composite="comp" dataType="AN" elementPurpose="Name and address description" isMappable="true" isNode="true" key="82" mandatory="false" maxLength="35" minLength="1" name="NAD03.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form description of a name and address line." composite="comp" dataType="AN" elementPurpose="Name and address description" isMappable="true" isNode="true" key="83" mandatory="false" maxLength="35" minLength="1" name="NAD03.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form description of a name and address line." composite="comp" dataType="AN" elementPurpose="Name and address description" isMappable="true" isNode="true" key="84" mandatory="false" maxLength="35" minLength="1" name="NAD03.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form description of a name and address line." composite="comp" dataType="AN" elementPurpose="Name and address description" isMappable="true" isNode="true" key="85" mandatory="false" maxLength="35" minLength="1" name="NAD03.5" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a party." composite="start" dataType="AN" elementPurpose="Party name" isMappable="true" isNode="true" key="86" mandatory="true" maxLength="35" minLength="1" name="NAD04.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a party." composite="comp" dataType="AN" elementPurpose="Party name" isMappable="true" isNode="true" key="87" mandatory="false" maxLength="35" minLength="1" name="NAD04.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a party." composite="comp" dataType="AN" elementPurpose="Party name" isMappable="true" isNode="true" key="88" mandatory="false" maxLength="35" minLength="1" name="NAD04.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a party." composite="comp" dataType="AN" elementPurpose="Party name" isMappable="true" isNode="true" key="89" mandatory="false" maxLength="35" minLength="1" name="NAD04.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a party." composite="comp" dataType="AN" elementPurpose="Party name" isMappable="true" isNode="true" key="90" mandatory="false" maxLength="35" minLength="1" name="NAD04.5" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the representation of a party name." composite="comp" dataType="AN" elementPurpose="Party name format code" isMappable="true" isNode="true" key="91" mandatory="false" maxLength="3" minLength="1" name="NAD04.6" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3045"/>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a street and number and/or Post Office box number." composite="start" dataType="AN" elementPurpose="Street and number or post office box identifier" isMappable="true" isNode="true" key="92" mandatory="true" maxLength="35" minLength="1" name="NAD05.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a street and number and/or Post Office box number." composite="comp" dataType="AN" elementPurpose="Street and number or post office box identifier" isMappable="true" isNode="true" key="93" mandatory="false" maxLength="35" minLength="1" name="NAD05.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a street and number and/or Post Office box number." composite="comp" dataType="AN" elementPurpose="Street and number or post office box identifier" isMappable="true" isNode="true" key="94" mandatory="false" maxLength="35" minLength="1" name="NAD05.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="To identify a street and number and/or Post Office box number." composite="comp" dataType="AN" elementPurpose="Street and number or post office box identifier" isMappable="true" isNode="true" key="95" mandatory="false" maxLength="35" minLength="1" name="NAD05.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a city." dataType="AN" elementPurpose="City name" isMappable="true" isNode="true" key="96" mandatory="false" maxLength="35" minLength="1" name="NAD06" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Identification of the name of sub-entities (state, province) defined by appropriate governmental agencies." composite="start" dataType="AN" elementPurpose="Country sub-entity name code" isMappable="true" isNode="true" key="97" mandatory="false" maxLength="9" minLength="1" name="NAD07.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="98" mandatory="false" maxLength="3" minLength="1" name="NAD07.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1131"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="99" mandatory="false" maxLength="3" minLength="1" name="NAD07.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3055"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a country sub-entity." composite="comp" dataType="AN" elementPurpose="Country sub-entity name" isMappable="true" isNode="true" key="100" mandatory="false" maxLength="35" minLength="1" name="NAD07.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the postal zone or address." dataType="AN" elementPurpose="Postal identification code" isMappable="true" isNode="true" key="101" mandatory="false" maxLength="17" minLength="1" name="NAD08" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Identification of the name of the country or other geographical entity as specified in ISO 3166." dataType="AN" elementPurpose="Country name code" isMappable="true" isNode="true" key="102" mandatory="false" maxLength="3" minLength="1" name="NAD09" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+              </EdiSegment>
+              <EdiSegment isNode="true" key="103" mandatory="false" maxUse="9" name="CTA" position="0140" repeatAction="na" segmentName="CONTACT INFORMATION">
+                <EdiDataElement comments="Code specifying the function of a contact (e.g. department or person)." dataType="AN" elementPurpose="Contact function code" isMappable="true" isNode="true" key="104" mandatory="false" maxLength="3" minLength="1" name="CTA01" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3139"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the name of a department or employee." composite="start" dataType="AN" elementPurpose="Department or employee name code" isMappable="true" isNode="true" key="105" mandatory="false" maxLength="17" minLength="1" name="CTA02.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Name of a department or employee." composite="comp" dataType="AN" elementPurpose="Department or employee name" isMappable="true" isNode="true" key="106" mandatory="false" maxLength="35" minLength="1" name="CTA02.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+              </EdiSegment>
+              <EdiSegment isNode="true" key="107" mandatory="false" maxUse="9" name="COM" position="0150" repeatAction="na" segmentName="COMMUNICATION CONTACT">
+                <EdiDataElement comments="The communication number." composite="start" dataType="AN" elementPurpose="Communication number" isMappable="true" isNode="true" key="108" mandatory="true" maxLength="512" minLength="1" name="COM01.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code qualifying the communication number." composite="comp" dataType="AN" elementPurpose="Communication number code qualifier" isMappable="true" isNode="true" key="109" mandatory="true" maxLength="3" minLength="1" name="COM01.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3155"/>
+                </EdiDataElement>
+              </EdiSegment>
+            </EdiLoop>
+            <EdiLoop isNode="true" key="110" loopId="ERC" loopRepeat="99999" loopingOption="unique" name="ERC">
+              <EdiSegment isNode="true" key="111" mandatory="true" maxUse="1" name="ERC" position="0170" repeatAction="na" segmentName="APPLICATION ERROR INFORMATION">
+                <EdiDataElement comments="Code specifying an application error." composite="start" dataType="AN" elementPurpose="Application error code" isMappable="true" isNode="true" key="112" mandatory="true" maxLength="8" minLength="1" name="ERC01.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="113" mandatory="false" maxLength="3" minLength="1" name="ERC01.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1131"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="114" mandatory="false" maxLength="3" minLength="1" name="ERC01.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3055"/>
+                </EdiDataElement>
+              </EdiSegment>
+              <EdiSegment isNode="true" key="115" mandatory="false" maxUse="1" name="FTX" position="0180" repeatAction="na" segmentName="FREE TEXT">
+                <EdiDataElement comments="Code qualifying the subject of the text." dataType="AN" elementPurpose="Text subject code qualifier" isMappable="true" isNode="true" key="116" mandatory="true" maxLength="3" minLength="1" name="FTX01" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="4451"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the function of free text." dataType="AN" elementPurpose="Free text function code" isMappable="true" isNode="true" key="117" mandatory="false" maxLength="3" minLength="1" name="FTX02" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="4453"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying free form text." composite="start" dataType="AN" elementPurpose="Free text value code" isMappable="true" isNode="true" key="118" mandatory="true" maxLength="17" minLength="1" name="FTX03.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="119" mandatory="false" maxLength="3" minLength="1" name="FTX03.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="1131"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="120" mandatory="false" maxLength="3" minLength="1" name="FTX03.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="3055"/>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form text." composite="start" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="121" mandatory="true" maxLength="512" minLength="1" name="FTX04.1" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="122" mandatory="false" maxLength="512" minLength="1" name="FTX04.2" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="123" mandatory="false" maxLength="512" minLength="1" name="FTX04.3" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="124" mandatory="false" maxLength="512" minLength="1" name="FTX04.4" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="125" mandatory="false" maxLength="512" minLength="1" name="FTX04.5" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the language name." dataType="AN" elementPurpose="Language name code" isMappable="true" isNode="true" key="126" mandatory="false" maxLength="3" minLength="1" name="FTX05" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                </EdiDataElement>
+                <EdiDataElement comments="Code specifying the format of free text." dataType="AN" elementPurpose="Free text format code" isMappable="true" isNode="true" key="127" mandatory="false" maxLength="3" minLength="1" name="FTX06" validateData="true">
+                  <DataFormat>
+                    <ProfileCharacterFormat/>
+                  </DataFormat>
+                  <QualifierList codeList="4447"/>
+                </EdiDataElement>
+              </EdiSegment>
+              <EdiLoop isNode="true" key="128" loopId="RFF" loopRepeat="9" loopingOption="unique" name="RFF">
+                <EdiSegment isNode="true" key="129" mandatory="true" maxUse="1" name="RFF" position="0200" repeatAction="na" segmentName="REFERENCE">
+                  <EdiDataElement comments="Code qualifying a reference." composite="start" dataType="AN" elementPurpose="Reference function code qualifier" isMappable="true" isNode="true" key="130" mandatory="true" maxLength="3" minLength="1" name="RFF01.1" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                    <QualifierList codeList="1153"/>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Identifies a reference." composite="comp" dataType="AN" elementPurpose="Reference identifier" isMappable="true" isNode="true" key="131" mandatory="false" maxLength="35" minLength="1" name="RFF01.2" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="To identify a line of a document." composite="comp" dataType="AN" elementPurpose="Document line identifier" isMappable="true" isNode="true" key="132" mandatory="false" maxLength="6" minLength="1" name="RFF01.3" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="To identify the version of a reference." composite="comp" dataType="AN" elementPurpose="Reference version identifier" isMappable="true" isNode="true" key="133" mandatory="false" maxLength="35" minLength="1" name="RFF01.4" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="To identify a revision." composite="comp" dataType="AN" elementPurpose="Revision identifier" isMappable="true" isNode="true" key="134" mandatory="false" maxLength="6" minLength="1" name="RFF01.5" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                </EdiSegment>
+                <EdiSegment isNode="true" key="135" mandatory="false" maxUse="9" name="FTX" position="0210" repeatAction="na" segmentName="FREE TEXT">
+                  <EdiDataElement comments="Code qualifying the subject of the text." dataType="AN" elementPurpose="Text subject code qualifier" isMappable="true" isNode="true" key="136" mandatory="true" maxLength="3" minLength="1" name="FTX01" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                    <QualifierList codeList="4451"/>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Code specifying the function of free text." dataType="AN" elementPurpose="Free text function code" isMappable="true" isNode="true" key="137" mandatory="false" maxLength="3" minLength="1" name="FTX02" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                    <QualifierList codeList="4453"/>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Code specifying free form text." composite="start" dataType="AN" elementPurpose="Free text value code" isMappable="true" isNode="true" key="138" mandatory="true" maxLength="17" minLength="1" name="FTX03.1" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Code identifying a code list." composite="comp" dataType="AN" elementPurpose="Code list identification code" isMappable="true" isNode="true" key="139" mandatory="false" maxLength="3" minLength="1" name="FTX03.2" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                    <QualifierList codeList="1131"/>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Code specifying the agency responsible for a code list." composite="comp" dataType="AN" elementPurpose="Code list responsible agency code" isMappable="true" isNode="true" key="140" mandatory="false" maxLength="3" minLength="1" name="FTX03.3" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                    <QualifierList codeList="3055"/>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Free form text." composite="start" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="141" mandatory="true" maxLength="512" minLength="1" name="FTX04.1" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="142" mandatory="false" maxLength="512" minLength="1" name="FTX04.2" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="143" mandatory="false" maxLength="512" minLength="1" name="FTX04.3" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="144" mandatory="false" maxLength="512" minLength="1" name="FTX04.4" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Free form text." composite="comp" dataType="AN" elementPurpose="Free text value" isMappable="true" isNode="true" key="145" mandatory="false" maxLength="512" minLength="1" name="FTX04.5" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Code specifying the language name." dataType="AN" elementPurpose="Language name code" isMappable="true" isNode="true" key="146" mandatory="false" maxLength="3" minLength="1" name="FTX05" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                  </EdiDataElement>
+                  <EdiDataElement comments="Code specifying the format of free text." dataType="AN" elementPurpose="Free text format code" isMappable="true" isNode="true" key="147" mandatory="false" maxLength="3" minLength="1" name="FTX06" validateData="true">
+                    <DataFormat>
+                      <ProfileCharacterFormat/>
+                    </DataFormat>
+                    <QualifierList codeList="4447"/>
+                  </EdiDataElement>
+                </EdiSegment>
+              </EdiLoop>
+            </EdiLoop>
+          </EdiLoop>
+          <EdiLoop isContainer="true" isNode="true" key="2" loopId="2" loopRepeat="-1" loopingOption="unique" name="Detail"/>
+          <EdiLoop isContainer="true" isNode="true" key="3" loopId="3" loopRepeat="1" loopingOption="unique" name="Summary">
+            <EdiSegment isNode="true" key="148" mandatory="true" maxUse="1" name="UNT" position="0220" repeatAction="na" segmentName="Message Trailer">
+              <EdiDataElement comments="Number of segments in the message" dataType="N" elementPurpose="Number of segments in the message" isMappable="true" isNode="true" key="149" mandatory="true" maxLength="6" minLength="1" name="UNT01" validateData="true">
+                <DataFormat>
+                  <ProfileNumberFormat impliedDecimal="0" signedField="false"/>
+                </DataFormat>
+              </EdiDataElement>
+              <EdiDataElement comments="Message reference number" dataType="AN" elementPurpose="Message reference number" isMappable="true" isNode="true" key="150" mandatory="true" maxLength="14" minLength="1" name="UNT02" validateData="true">
+                <DataFormat>
+                  <ProfileCharacterFormat/>
+                </DataFormat>
+              </EdiDataElement>
+            </EdiSegment>
+          </EdiLoop>
+        </DataElements>
+        <tagLists/>
+      </EdiProfile>
+    </bns:object>
+  </Component>
+  
