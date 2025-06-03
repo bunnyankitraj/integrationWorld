@@ -152,6 +152,7 @@ def call_gemini_api(prompt):
         response_json = response.json()
         ai_response = response_json["candidates"][0]["content"]["parts"][0]["text"]
         cleaned_json = re.sub(r"```json\s*|\s*```", "", ai_response).strip()
+        logger.debug(json.loads(cleaned_json))
         return json.loads(cleaned_json)
     except Exception as e:
         logger.error(f"API Error: {str(e)}")
